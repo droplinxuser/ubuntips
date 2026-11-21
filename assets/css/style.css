@@ -562,8 +562,8 @@ a:hover {
 .row-thumb {
   flex: none;
   display: block;
-  width: 112px;
-  height: 59px;
+  width: 160px;
+  height: 84px;
   object-fit: cover;
   border: 1px solid var(--border-default);
   border-radius: 6px;
@@ -972,8 +972,8 @@ a:hover {
     display: none;
   }
   .row-thumb {
-    width: 88px;
-    height: 47px;
+    width: 112px;
+    height: 59px;
   }
   .markdown-body {
     font-size: 15px;

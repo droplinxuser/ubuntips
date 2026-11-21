@@ -7,9 +7,15 @@
       <a href="{{ "/" | relURL }}">ubuntips.com</a>
       {{ if not .IsHome }}
         <span class="sep">/</span>
-        {{ if $isPosts }}<a href="{{ "/posts/" | relURL }}">posts</a>{{ end }}
-        {{ if and $isPosts .IsPage }}<span class="sep">/</span>{{ end }}
-        {{ if or .IsPage $isAbout }}<span class="current">{{ .Title }}</span>{{ else if and $isPosts (not .IsPage) }}<span class="current">all posts</span>{{ end }}
+        {{ if $isPosts }}
+          <a href="{{ "/posts/" | relURL }}">posts</a>
+          <span class="sep">/</span>
+          {{ if .IsPage }}<span class="current">{{ .Title }}</span>{{ else }}<span class="current">all posts</span>{{ end }}
+        {{ else if $isAbout }}
+          <span class="current">About</span>
+        {{ else }}
+          <span class="current">{{ .Title }}</span>
+        {{ end }}
       {{ end }}
     </div>
     <nav class="repo-tabs" aria-label="Sections">
