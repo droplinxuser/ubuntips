@@ -76,6 +76,8 @@ tools will fail the build.
 - **Client-side search** with keyboard navigation (`/`, arrows, Enter, Escape),
   ARIA combobox semantics, an announced result count, and shareable `?q=` URLs.
 - **Pinned posts** via `sticky: true`.
+- **Tag index** at `/tags/` with counts, and clean plain pages (About) without
+  post chrome.
 - **Edit this page** link on every post, pointing at the GitHub editor.
 - **404 page** with search and the latest posts.
 - **Skip to content** link, semantic headings and focus styles.
@@ -120,8 +122,9 @@ Chrome if you want them locally.
 - `layouts/partials/head.html` emits canonical, robots, Open Graph, Twitter,
   theme-color, a CSP and the stylesheet/script tags.
 - `layouts/partials/schema.html` emits JSON-LD: `BlogPosting` + `BreadcrumbList`
-  on posts, `WebSite` + `Organization` on the home page, with `dateModified`
-  from git.
+  on posts, `WebPage` on plain pages, `CollectionPage` + `ItemList` on listings,
+  and `WebSite` + `Organization` on the home page, with `dateModified` from git.
+- Every page advertises the site feed (or its section feed) for RSS discovery.
 - Icons: `favicon.ico`, `favicon.svg`, PNG fallbacks, `apple-touch-icon`,
   `site.webmanifest`.
 - The author for every post comes from `params.author` (`Draft`), so new posts
@@ -152,9 +155,9 @@ records, SSL mode *Full*) and add a Cache Rule for `/css/*`, `/js/*` and
 ## Search
 
 The header search box loads `/index.json` and filters client-side. The index
-contains title, URL, date, description, tags and the first 1,200 characters of
-plain text per post, so it stays small (about 6 KB for four posts) instead of
-carrying full Markdown. Searches are deep-linkable with `?q=`, and the home
+contains title, URL, date, description, tags and the first 4,000 characters of
+plain text per post, so deep terms in a long post are still searchable while
+the payload stays small. Searches are deep-linkable with `?q=`, and the home
 page's structured data advertises that URL as a `SearchAction`.
 
 ## CI

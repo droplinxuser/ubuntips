@@ -37,18 +37,20 @@
       </div>
     </div>
 
-    {{ with site.Taxonomies.tags }}
-      <div class="box">
-        <div class="box-header">{{ partial "icon.html" "tag" }} Tags</div>
-        <div class="box-body">
-          <div class="labels">
-            {{ range first 24 .ByCount }}
-              <a class="label" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }} <span>{{ .Count }}</span></a>
-            {{ end }}
+    {{ if ne .Kind "taxonomy" }}
+      {{ with site.Taxonomies.tags }}
+        <div class="box">
+          <div class="box-header">{{ partial "icon.html" "tag" }} Tags</div>
+          <div class="box-body">
+            <div class="labels">
+              {{ range first 24 .ByCount }}
+                <a class="label" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }} <span>{{ .Count }}</span></a>
+              {{ end }}
+            </div>
+            <a class="sidebar-more" href="{{ "/tags/" | relURL }}">All tags →</a>
           </div>
-          <a class="sidebar-more" href="{{ "/tags/" | relURL }}">All tags →</a>
         </div>
-      </div>
+      {{ end }}
     {{ end }}
   {{ end }}
 

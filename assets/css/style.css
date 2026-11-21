@@ -1411,3 +1411,18 @@ html[data-theme="light"] .theme-toggle .icon-sun,
 html[data-theme="dark"] .theme-toggle .icon-moon {
   display: block;
 }
+
+.tags-cloud {
+  gap: 8px;
+}
+
+.tags-cloud .label {
+  font-size: 13px;
+  line-height: 24px;
+}
+
+@media (hover: none) {
+  .heading-anchor .anchor {
+    opacity: 0.5;
+  }
+}

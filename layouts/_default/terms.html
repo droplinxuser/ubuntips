@@ -1,0 +1,18 @@
+{{ define "main" }}
+<div class="layout">
+  <div>
+    <h1 class="list-heading">{{ .Title }}</h1>
+    <div class="box">
+      <div class="box-header">{{ partial "icon.html" "tag" }} {{ len .Pages }} tags</div>
+      <div class="box-body">
+        <div class="labels tags-cloud">
+          {{ range .Pages.ByTitle }}
+            <a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }} <span>{{ len .Pages }}</span></a>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ partial "sidebar.html" . }}
+</div>
+{{ end }}

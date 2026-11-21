@@ -1,75 +1,89 @@
 {{ define "main" }}
 <div class="layout">
   <div>
-    <article>
-      <div class="post-heading">
-        <h1>{{ .Title }}</h1>
-        <p class="post-submeta">
-          <span class="avatar" aria-hidden="true">{{ substr site.Title 0 1 }}</span>
-          {{ site.Params.author }}
-          posted on <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
-          · {{ .ReadingTime }} min read
-        </p>
-        {{ if gt (.Lastmod.Sub .Date).Hours 24 }}
-          <p class="post-updated">Updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "Jan 2, 2006" }}</time></p>
-        {{ end }}
-      </div>
-
-      {{ if .TableOfContents }}
-        <details class="box toc" open>
-          <summary class="box-header">{{ partial "icon.html" "list" }} On this page</summary>
-          <div class="box-body toc-body">{{ .TableOfContents }}</div>
-        </details>
-      {{ end }}
-
-      <div class="box comment-box">
-        <div class="box-header">
-          {{ partial "icon.html" "comment" }}
-          <span>{{ site.Params.author }} commented on {{ .Date.Format "Jan 2, 2006" }}</span>
+    {{ if ne .Section "posts" }}
+      <article>
+        <div class="post-heading">
+          <h1>{{ .Title }}</h1>
+          {{ with .Description }}<p class="post-submeta">{{ . }}</p>{{ end }}
         </div>
-        <div class="box-body">
-          <div class="comment-body markdown-body">
+        <div class="box">
+          <div class="box-body markdown-body">
             {{ .Content }}
           </div>
-          <div class="comment-footer">
-            <div class="labels">
-              {{ range .GetTerms "tags" }}
-                <a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
-              {{ end }}
+        </div>
+      </article>
+    {{ else }}
+      <article>
+        <div class="post-heading">
+          <h1>{{ .Title }}</h1>
+          <p class="post-submeta">
+            <span class="avatar" aria-hidden="true">{{ substr site.Title 0 1 }}</span>
+            {{ site.Params.author }}
+            posted on <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+            · {{ .ReadingTime }} min read
+          </p>
+          {{ if gt (.Lastmod.Sub .Date).Hours 24 }}
+            <p class="post-updated">Updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "Jan 2, 2006" }}</time></p>
+          {{ end }}
+        </div>
+
+        {{ if .TableOfContents }}
+          <details class="box toc" open>
+            <summary class="box-header">{{ partial "icon.html" "list" }} On this page</summary>
+            <div class="box-body toc-body">{{ .TableOfContents }}</div>
+          </details>
+        {{ end }}
+
+        <div class="box comment-box">
+          <div class="box-header">
+            {{ partial "icon.html" "comment" }}
+            <span>{{ site.Params.author }} commented on {{ .Date.Format "Jan 2, 2006" }}</span>
+          </div>
+          <div class="box-body">
+            <div class="comment-body markdown-body">
+              {{ .Content }}
             </div>
-            <span>{{ .WordCount }} words</span>
+            <div class="comment-footer">
+              <div class="labels">
+                {{ range .GetTerms "tags" }}
+                  <a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+                {{ end }}
+              </div>
+              <span>{{ .WordCount }} words</span>
+            </div>
           </div>
         </div>
-      </div>
-    </article>
+      </article>
 
-    <nav class="post-nav" aria-label="Post navigation">
-      {{ with .PrevInSection }}<a class="btn" href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}
-      {{ with .NextInSection }}<a class="btn next" href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}
-    </nav>
+      <nav class="post-nav" aria-label="Post navigation">
+        {{ with .PrevInSection }}<a class="btn" href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}
+        {{ with .NextInSection }}<a class="btn next" href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}
+      </nav>
 
-    {{ $related := first 3 (site.RegularPages.Related .) }}
-    {{ $relatedTitle := "Related posts" }}
-    {{ if not $related }}
-      {{ $relatedTitle = "More posts" }}
-      {{ $sorted := partial "sorted-posts.html" . }}
-      {{ $related = first 3 (where $sorted "RelPermalink" "!=" .RelPermalink) }}
+      {{ $related := first 3 (site.RegularPages.Related .) }}
+      {{ $relatedTitle := "Related posts" }}
+      {{ if not $related }}
+        {{ $relatedTitle = "More posts" }}
+        {{ $sorted := partial "sorted-posts.html" . }}
+        {{ $related = first 3 (where $sorted "RelPermalink" "!=" .RelPermalink) }}
+      {{ end }}
+      {{ with $related }}
+        <section class="related" aria-labelledby="related-title">
+          <h2 id="related-title">{{ $relatedTitle }}</h2>
+          <ul class="related-list">
+            {{ range . }}
+              <li class="related-item">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                {{ with .Description }}<p class="related-desc">{{ . }}</p>{{ end }}
+              </li>
+            {{ end }}
+          </ul>
+        </section>
+      {{ end }}
+
+      <p class="back-top"><a href="#content">Back to top ↑</a></p>
     {{ end }}
-    {{ with $related }}
-      <section class="related" aria-labelledby="related-title">
-        <h2 id="related-title">{{ $relatedTitle }}</h2>
-        <ul class="related-list">
-          {{ range . }}
-            <li class="related-item">
-              <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-              {{ with .Description }}<p class="related-desc">{{ . }}</p>{{ end }}
-            </li>
-          {{ end }}
-        </ul>
-      </section>
-    {{ end }}
-
-    <p class="back-top"><a href="#content">Back to top ↑</a></p>
   </div>
   {{ partial "sidebar.html" . }}
 </div>
