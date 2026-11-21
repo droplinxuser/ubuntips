@@ -6,7 +6,6 @@
       <div class="box-body">
         <ul class="sidebar-stats">
           <li><strong>Published:</strong> <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time></li>
-          <li><strong>Reading time:</strong> {{ .ReadingTime }} min</li>
           <li><strong>Words:</strong> {{ .WordCount }}</li>
           <li><strong>Section:</strong> <a href="{{ "/posts/" | relURL }}">posts</a></li>
         </ul>
