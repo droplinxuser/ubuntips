@@ -25,7 +25,7 @@ C is the "no extensions" setup that many forums already run. Every other result 
 ## Test bed
 
 - One dedicated server: 6-core / 12-thread Xeon, 62 GB RAM, Ubuntu 26.04.
-- Angie, PHP-FPM 8.5 (`pm = static`, 12 children), MariaDB, and Valkey on a Unix socket. Everything was installed and tuned by the same provisioning script used for these notes.
+- Angie, PHP-FPM 8.5 (`pm = static`, 12 children), MariaDB, and Valkey on a Unix socket. Everything was installed and tuned by the same [provisioning script used for these notes](/posts/one-idempotent-script/).
 - XenForo 2.3.13 filled with generated content. SV StandardLib, RedisCache 2.18.12, RedisFloodCheck and RedisViewCounter were installed.
 - 64 logged-in members, picked at random on every request, reading 300 threads and 47 forums. Read state was pre-warmed so it did not grow during the runs.
 - [wrk](https://github.com/wg/wrk) at 24 connections for 20 seconds, for four page types: home, thread, forum list, and a mixed set. Two single-connection runs (`thread-c1`, `home-c1`) measured plain page latency.
@@ -128,6 +128,28 @@ The SV add-ons show the same pattern. XenForo's core provider (D) uses php-redis
 ## One false alarm
 
 The first home-page run with the 0.9 ms database showed 18.4 queries per request instead of the usual 14.3, which looked like a TCP-only code path. The three-round median for that page was back at 14.3, the same as over the local socket. It was a cold first pass after the switch, which is a good reason never to trust a single run.
+
+## What this does not prove
+
+The result is narrow, and it is worth being explicit about where it stops:
+
+- **One forum shape.** Generated content, 64 logged-in members and 300 threads exercise the cache paths but not your add-on mix. A forum with heavy search, reactions or a chat add-on makes more queries per page, which changes how much the cache is worth.
+- **One host.** CPU, RAM and disk were constant across setups, so the comparison isolates the cache clients. It says nothing about how the numbers scale down to a 2-vCPU VPS, where PHP time dominates even more.
+- **One database location.** The remote cases simulate latency with `tc netem` and nothing else. A real remote database also adds CPU contention, connection resets and jitter.
+- **Guest traffic is excluded.** Guests can be served from the web server's page cache, where PHP and the cache barely appear. The interesting case is members, so that is what was measured.
+- **Throughput, not tail latency.** Median throughput over 20-second runs shows saturation behaviour. It is not a p99 study, and a cache miss storm under a cold start can look different.
+
+None of that changes the conclusion for a typical XenForo host — the client choice is noise next to whether the cache exists — but it is the boundary of the claim.
+
+## Choosing a setup
+
+| Your situation | Sensible default |
+|---|---|
+| Fresh host, no existing XenForo config | SV RedisCache with `php-igbinary`, no `php-redis` |
+| `config.php` selects the core `Redis` provider | Install `php-redis`; the core provider requires it |
+| Database on a separate server | Keep the cache on, keep the SV add-ons, and treat database latency as the first thing to fix |
+| Cache memory is the constraint | Add `php-igbinary`; it cut a sample entry roughly 4× |
+| You are unsure what your host does now | Measure the database round trip and the cache hit path before changing anything |
 
 ## What I changed
 
