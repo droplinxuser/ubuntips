@@ -1,0 +1,32 @@
+{{- $page := .page -}}
+{{- $description := .description -}}
+{{- $image := .image -}}
+{{- $author := dict "@type" "Person" "name" site.Params.author -}}
+{{- $publisher := dict "@type" "Organization" "name" site.Title "url" site.BaseURL -}}
+{{- if $page.IsPage -}}
+  {{- $schema := dict
+    "@context" "https://schema.org"
+    "@type" "BlogPosting"
+    "headline" $page.Title
+    "description" $description
+    "datePublished" ($page.Date.Format "2006-01-02T15:04:05Z07:00")
+    "dateModified" ($page.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+    "url" $page.Permalink
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" $page.Permalink)
+    "image" $image
+    "author" $author
+    "publisher" $publisher
+    "inLanguage" (site.Language.Locale | default "en-US")
+  -}}
+  <script type="application/ld+json">{{ $schema | jsonify | safeJS }}</script>
+{{- else -}}
+  {{- $schema := dict
+    "@context" "https://schema.org"
+    "@type" "WebSite"
+    "name" site.Title
+    "description" $description
+    "url" site.BaseURL
+    "inLanguage" (site.Language.Locale | default "en-US")
+  -}}
+  <script type="application/ld+json">{{ $schema | jsonify | safeJS }}</script>
+{{- end -}}

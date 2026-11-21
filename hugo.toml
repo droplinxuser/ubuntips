@@ -12,6 +12,8 @@ enableGitInfo = false
   description = "Practical notes on provisioning, tuning and hardening Ubuntu servers."
   author = "droplinxuser"
   repo = "https://github.com/droplinxuser/ubuntips"
+  ogImage = "/img/og-default.png"
+  ogImageAlt = "ubuntips.com — practical notes on Ubuntu servers"
 
 [markup]
   [markup.highlight]

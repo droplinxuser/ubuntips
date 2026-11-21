@@ -49,6 +49,24 @@ cp /tmp/hugo-pkg/Payload/hugo .tools/hugo && chmod +x .tools/hugo
 | `static/CNAME` | Keeps the custom domain on every deploy |
 | `.github/workflows/pages.yml` | Build and deploy to GitHub Pages |
 
+## Social previews
+
+`static/img/og-default.png` (1200×630) is the fallback card used by Open Graph,
+Twitter and JSON-LD. Override it per page:
+
+```yaml
+---
+title: "Post title"
+date: 2026-11-21T09:00:00+08:00
+images: ["/img/my-post-card.png"]
+ogImageAlt: "Optional alt text for the card"
+---
+```
+
+The default card is rendered from `tools/og-card.html` (a 1200×630 HTML page).
+To regenerate it, serve the site, open `tools/og-card.html` at a viewport wider
+than 1200×630, screenshot it, centre-crop to 2400×1260 and resize to 1200×630.
+
 ## Search
 
 The header search box loads `/index.json` (generated from all posts) and filters
