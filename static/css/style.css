@@ -236,10 +236,12 @@ a:hover {
   gap: 6px;
   font-size: 18px;
   margin-bottom: 12px;
+  min-width: 0;
 }
 
 .breadcrumb a {
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .breadcrumb .sep {
@@ -249,12 +251,22 @@ a:hover {
 
 .breadcrumb .current {
   font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .repo-tabs {
   display: flex;
   gap: 4px;
   overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.repo-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .repo-tabs a {
@@ -660,7 +672,10 @@ a:hover {
 }
 
 .post-nav .btn {
+  flex: 1 1 auto;
+  min-width: 0;
   max-width: 100%;
+  justify-content: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -688,9 +703,10 @@ a:hover {
 
 .comment-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px 12px;
   padding: 8px 16px;
   background: var(--canvas-subtle);
   border-top: 1px solid var(--border-default);
@@ -842,24 +858,213 @@ a:hover {
 
 /* ---------- Small screens ---------- */
 
+/* ---------- Long content safety ---------- */
+
+.markdown-body {
+  overflow-wrap: break-word;
+}
+
+.markdown-body a {
+  overflow-wrap: anywhere;
+}
+
+.markdown-body img,
+.markdown-body svg,
+.markdown-body video,
+.markdown-body iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-body iframe {
+  aspect-ratio: 16 / 9;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-fg);
+  outline-offset: 2px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1011px) {
+  .layout {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gh-search-results {
+    width: min(380px, calc(100vw - 32px));
+  }
+  .post-heading h1 {
+    font-size: 23px;
+  }
+}
+
 @media (max-width: 640px) {
   .gh-header-inner {
     flex-wrap: wrap;
     gap: 8px 12px;
+    padding: 10px 12px;
+  }
+  .gh-brand {
+    font-size: 15px;
+  }
+  .gh-nav {
+    order: 2;
+    margin-left: auto;
+    gap: 12px;
   }
   .gh-search {
     width: 100%;
     max-width: none;
     order: 3;
   }
-  .gh-nav {
-    order: 2;
-    margin-left: auto;
+  .gh-search input {
+    font-size: 16px; /* prevents iOS zoom on focus */
+    padding: 7px 12px 7px 32px;
+  }
+  .gh-search-results {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+  .repo-bar-inner {
+    padding: 12px 12px 0;
   }
   .breadcrumb {
-    font-size: 16px;
+    font-size: 15px;
+  }
+  .repo-tabs a {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .container {
+    padding: 16px 12px 40px;
+  }
+  .box-body,
+  .comment-body {
+    padding: 12px;
+  }
+  .box-header {
+    padding: 8px 12px;
+  }
+  .list-header {
+    padding: 8px 12px;
+  }
+  .list-row {
+    padding: 12px;
+    gap: 10px;
   }
   .row-time {
     display: none;
+  }
+  .markdown-body {
+    font-size: 15px;
+  }
+  .markdown-body pre {
+    padding: 12px;
+    font-size: 80%;
+  }
+  .markdown-body table th,
+  .markdown-body table td {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  .post-heading h1 {
+    font-size: 21px;
+  }
+  .post-submeta {
+    font-size: 12px;
+  }
+  .comment-footer {
+    padding: 8px 12px;
+  }
+  .gh-footer {
+    padding: 24px 12px 36px;
+  }
+  .gh-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gh-nav {
+    font-size: 13px;
+  }
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+  .post-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .post-nav .btn {
+    width: 100%;
+    white-space: normal;
+  }
+  .pagination {
+    flex-wrap: wrap;
+  }
+  .markdown-body h1 {
+    font-size: 1.5em;
+  }
+  .markdown-body h2 {
+    font-size: 1.3em;
+  }
+  .markdown-body ul,
+  .markdown-body ol {
+    padding-left: 1.4em;
+  }
+  .list-row {
+    gap: 8px;
+  }
+  .row-icon {
+    margin-top: 1px;
+  }
+  .row-title {
+    font-size: 14px;
+  }
+  .sidebar .btn {
+    padding: 7px 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  html {
+    font-size: 15px;
+  }
+  .gh-header-inner {
+    gap: 6px 8px;
+  }
+  .gh-brand {
+    gap: 6px;
+    font-size: 14px;
+  }
+  .gh-nav {
+    gap: 10px;
+  }
+  .repo-tabs a {
+    padding: 8px;
+  }
+  .label {
+    padding: 0 8px;
+  }
+  .row-title {
+    font-size: 13.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
