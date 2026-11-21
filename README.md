@@ -65,18 +65,20 @@ tools will fail the build.
 
 ## Features
 
-- **Table of contents** in a card above each long post, with `#` anchors on
-  every `h2`/`h3` for deep links.
+- **Table of contents** above each long post, collapsible on mobile, with the
+  current section highlighted while scrolling and `#` anchors for deep links.
 - **Light/dark/system theme** toggle in the header. The choice is stored in
   `localStorage`; the script that applies it loads before the stylesheet so
   there is no flash.
 - **Copy buttons** on every code block.
 - **Related posts** (by shared tags) with a "More posts" fallback.
-- **Client-side search** with keyboard navigation (`/`, arrows, Enter, Escape)
-  and ARIA combobox semantics.
+- **Client-side search** with keyboard navigation (`/`, arrows, Enter, Escape),
+  ARIA combobox semantics, and shareable `?q=` URLs.
 - **Pinned posts** via `sticky: true`.
+- **Edit this page** link on every post, pointing at the GitHub editor.
 - **404 page** with search and the latest posts.
 - **Skip to content** link, semantic headings and focus styles.
+- **Full-text RSS**, with `content:encoded` for whole posts.
 
 ## Social previews
 
@@ -104,9 +106,14 @@ Chrome if you want them locally.
 ## SEO
 
 - `layouts/robots.txt` allows everything and points to the sitemap.
+- `layouts/index.xml` emits a full-text RSS feed.
 - `layouts/sitemap.xml` sets priorities per page kind, keeps `lastmod` from git,
-  and leaves out tag pages that hold a single post.
+  and leaves out tag pages that hold a single post. The unused `categories`
+  taxonomy is disabled.
+- Listing pages (posts and tags) have a real `<h1>`, and tag pages get their own
+  meta description.
 - Pages with fewer than two posts in a tag are `noindex, follow`.
+- `.well-known/security.txt` is published for vulnerability reports.
 - `layouts/partials/head.html` emits canonical, robots, Open Graph, Twitter,
   theme-color, a CSP and the stylesheet/script tags.
 - `layouts/partials/schema.html` emits JSON-LD: `BlogPosting` + `BreadcrumbList`
@@ -143,7 +150,8 @@ Cloudflare Pages, which reads `_headers` directly.
 The header search box loads `/index.json` and filters client-side. The index
 contains title, URL, date, description, tags and the first 1,200 characters of
 plain text per post, so it stays small (about 6 KB for four posts) instead of
-carrying full Markdown.
+carrying full Markdown. Searches are deep-linkable with `?q=`, and the home
+page's structured data advertises that URL as a `SearchAction`.
 
 ## CI
 

@@ -4,7 +4,17 @@
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
 
 {{- $description := site.Params.description }}
-{{- with .Description }}{{ $description = . }}{{ else }}{{ if .IsPage }}{{ $description = .Summary | plainify | truncate 160 }}{{ end }}{{ end }}
+{{- if .Description }}
+  {{- $description = .Description }}
+{{- else if .IsPage }}
+  {{- $description = .Summary | plainify | truncate 160 }}
+{{- else if eq .Kind "term" }}
+  {{- $description = printf "Posts tagged “%s” on %s." .Title site.Title }}
+{{- else if eq .Kind "section" }}
+  {{- $description = printf "%s on %s: provisioning, tuning and hardening." .Title site.Title }}
+{{- else if eq .Kind "taxonomy" }}
+  {{- $description = printf "All topics covered on %s." site.Title }}
+{{- end }}
 {{- $og := partial "og-image.html" . }}
 {{- $thinTerm := and (eq .Kind "term") (lt (len .Pages) 2) }}
 

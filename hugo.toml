@@ -33,6 +33,9 @@ enableGitInfo = true
     name = "tags"
     weight = 100
 
+[taxonomies]
+  tag = "tags"
+
 [markup]
   [markup.highlight]
     noClasses = false

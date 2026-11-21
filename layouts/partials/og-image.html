@@ -1,6 +1,7 @@
 {{- $img := site.Params.ogImage | default "/img/og-default.png" -}}
 {{- $thumb := "" -}}
 {{- $alt := site.Params.ogImageAlt | default (printf "%s — %s" site.Title site.Params.description) -}}
+{{- if .IsPage }}{{ $alt = printf "%s — %s" .Title site.Title }}{{ end -}}
 {{- with .Params.ogImageAlt }}{{ $alt = . }}{{ end -}}
 {{- with .Params.images -}}
   {{- $img = index . 0 -}}

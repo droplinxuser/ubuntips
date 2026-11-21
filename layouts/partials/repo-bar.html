@@ -13,6 +13,10 @@
           {{ if .IsPage }}<span class="current">{{ .Title }}</span>{{ else }}<span class="current">all posts</span>{{ end }}
         {{ else if $isAbout }}
           <span class="current">About</span>
+        {{ else if eq .Kind "term" }}
+          <a href="{{ "/tags/" | relURL }}">tags</a>
+          <span class="sep">/</span>
+          <span class="current">{{ .Title }}</span>
         {{ else }}
           <span class="current">{{ .Title }}</span>
         {{ end }}

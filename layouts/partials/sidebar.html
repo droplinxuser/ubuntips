@@ -55,7 +55,14 @@
     <div class="box-header">{{ partial "icon.html" "repo" }} Repository</div>
     <div class="box-body">
       <p class="sidebar-note">Every post is a Markdown file. Pushing to <code>main</code> rebuilds the site with Hugo and publishes it through GitHub Pages.</p>
-      {{ with site.Params.repo }}<a class="btn" href="{{ . }}">View source</a>{{ end }}
+      {{ with site.Params.repo }}
+        <a class="btn" href="{{ . }}">View source</a>
+        {{ if $.IsPage }}
+          {{ with $.File }}
+            <a class="btn" style="margin-top: 8px" href="{{ printf "%s/edit/main/content/%s" site.Params.repo .Path }}">Edit this page</a>
+          {{ end }}
+        {{ end }}
+      {{ end }}
     </div>
   </div>
 </aside>

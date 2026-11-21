@@ -16,10 +16,10 @@
       </div>
 
       {{ if .TableOfContents }}
-        <div class="box toc">
-          <div class="box-header">{{ partial "icon.html" "list" }} On this page</div>
+        <details class="box toc" open>
+          <summary class="box-header">{{ partial "icon.html" "list" }} On this page</summary>
           <div class="box-body toc-body">{{ .TableOfContents }}</div>
-        </div>
+        </details>
       {{ end }}
 
       <div class="box comment-box">
@@ -68,6 +68,8 @@
         </ul>
       </section>
     {{ end }}
+
+    <p class="back-top"><a href="#content">Back to top ↑</a></p>
   </div>
   {{ partial "sidebar.html" . }}
 </div>

@@ -1327,3 +1327,41 @@ a:hover {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+.list-heading {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+details.toc summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+details.toc summary::-webkit-details-marker {
+  display: none;
+}
+
+details.toc summary::after {
+  content: "▾";
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--fg-muted);
+  transition: transform 0.15s ease;
+}
+
+details.toc:not([open]) summary::after {
+  transform: rotate(-90deg);
+}
+
+.toc-body a.active {
+  color: var(--accent-fg);
+  font-weight: 600;
+}
+
+.back-top {
+  margin: 24px 0 0;
+  font-size: 13px;
+}

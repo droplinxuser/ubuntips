@@ -42,4 +42,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
     wrap.appendChild(button);
   });
+
+  var toc = document.querySelector("details.toc");
+  if (toc && window.matchMedia && window.matchMedia("(max-width: 768px)").matches) {
+    toc.open = false;
+  }
+
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll(".toc-body a[href^='#']"));
+  if (tocLinks.length && "IntersectionObserver" in window) {
+    var byHeading = new Map();
+    tocLinks.forEach(function (link) {
+      var heading = document.getElementById(decodeURIComponent(link.getAttribute("href").slice(1)));
+      if (heading) byHeading.set(heading, link);
+    });
+
+    var clear = function () {
+      tocLinks.forEach(function (link) {
+        link.classList.remove("active");
+        link.removeAttribute("aria-current");
+      });
+    };
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var link = byHeading.get(entry.target);
+          if (!link) return;
+          clear();
+          link.classList.add("active");
+          link.setAttribute("aria-current", "true");
+        });
+      },
+      { rootMargin: "0px 0px -70% 0px", threshold: 0 }
+    );
+
+    byHeading.forEach(function (_, heading) {
+      observer.observe(heading);
+    });
+  }
 });

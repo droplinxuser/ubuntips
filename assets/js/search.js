@@ -133,4 +133,26 @@
       input.focus();
     }
   });
+
+  function syncUrl(value) {
+    try {
+      var url = new URL(window.location.href);
+      if (value.trim()) url.searchParams.set("q", value);
+      else url.searchParams.delete("q");
+      window.history.replaceState(null, "", url);
+    } catch (e) {}
+  }
+
+  input.addEventListener("input", function () {
+    syncUrl(input.value);
+  });
+
+  try {
+    var initial = new URLSearchParams(window.location.search).get("q");
+    if (initial) {
+      input.value = initial;
+      load();
+      render(initial);
+    }
+  } catch (e) {}
 })();

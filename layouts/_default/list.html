@@ -3,6 +3,7 @@
 {{- $sorted := partial "sorted-posts.html" . -}}
 <div class="layout">
   <div>
+    <h1 class="list-heading">{{ if eq .Kind "term" }}Posts tagged “{{ .Title }}”{{ else }}{{ .Title }}{{ end }}</h1>
     <div class="list">
       <div class="list-header">
         <span>{{ partial "icon.html" "issue" }} {{ .Title }}</span>

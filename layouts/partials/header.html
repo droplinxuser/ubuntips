@@ -5,8 +5,13 @@
       <span>ubuntips</span>
     </a>
     <nav class="gh-nav" aria-label="Main">
+      {{ $path := .RelPermalink }}
       {{ range site.Menus.main }}
-        <a href="{{ .URL }}">{{ .Name }}</a>
+        {{ $active := false }}
+        {{ with .Page }}
+          {{ if ne .RelPermalink "/" }}{{ $active = hasPrefix $path .RelPermalink }}{{ end }}
+        {{ end }}
+        <a href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
       {{ end }}
     </nav>
     <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme">
@@ -15,7 +20,7 @@
     </button>
     <div class="gh-search" role="search">
       <span class="search-icon">{{ partial "icon.html" "search" }}</span>
-      <input id="site-search" type="search" placeholder="Search posts…" autocomplete="off" spellcheck="false" aria-label="Search posts" aria-controls="search-results" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-haspopup="listbox" data-index="{{ "index.json" | relURL }}">
+      <input id="site-search" type="search" placeholder="Search posts…" autocomplete="off" spellcheck="false" aria-label="Search posts" aria-controls="search-results" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-haspopup="listbox" aria-keyshortcuts="/" title="Press / to search" data-index="{{ "index.json" | relURL }}">
       <div class="gh-search-results" id="search-results" role="listbox" aria-label="Search results"></div>
     </div>
   </div>
