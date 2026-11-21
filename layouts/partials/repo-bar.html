@@ -1,0 +1,21 @@
+{{- $path := .RelPermalink -}}
+{{- $isPosts := hasPrefix $path "/posts" -}}
+{{- $isAbout := eq $path "/about/" -}}
+<div class="repo-bar">
+  <div class="repo-bar-inner">
+    <div class="breadcrumb">
+      <a href="{{ "/" | relURL }}">ubuntips.com</a>
+      {{ if not .IsHome }}
+        <span class="sep">/</span>
+        {{ if $isPosts }}<a href="{{ "/posts/" | relURL }}">posts</a>{{ end }}
+        {{ if and $isPosts .IsPage }}<span class="sep">/</span>{{ end }}
+        {{ if or .IsPage $isAbout }}<span class="current">{{ .Title }}</span>{{ else if and $isPosts (not .IsPage) }}<span class="current">all posts</span>{{ end }}
+      {{ end }}
+    </div>
+    <nav class="repo-tabs" aria-label="Sections">
+      <a href="{{ "/posts/" | relURL }}"{{ if $isPosts }} aria-current="page"{{ end }}>{{ partial "icon.html" "issue" }} Posts</a>
+      <a href="{{ "/about/" | relURL }}"{{ if $isAbout }} aria-current="page"{{ end }}>{{ partial "icon.html" "repo" }} About</a>
+      <a href="{{ "index.xml" | relURL }}">{{ partial "icon.html" "rss" }} RSS</a>
+    </nav>
+  </div>
+</div>

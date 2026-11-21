@@ -1,0 +1,62 @@
+{{ $posts := where site.RegularPages "Section" "posts" }}
+<aside class="sidebar">
+  {{ if .IsPage }}
+    <div class="box">
+      <div class="box-header">{{ partial "icon.html" "clock" }} Post details</div>
+      <div class="box-body">
+        <ul class="sidebar-stats">
+          <li><strong>Published:</strong> <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time></li>
+          <li><strong>Reading time:</strong> {{ .ReadingTime }} min</li>
+          <li><strong>Words:</strong> {{ .WordCount }}</li>
+          <li><strong>Section:</strong> <a href="{{ "/posts/" | relURL }}">posts</a></li>
+        </ul>
+        {{ with .GetTerms "tags" }}
+          <div class="sidebar-sep"></div>
+          <ul class="sidebar-stats">
+            {{ range . }}<li><a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>{{ end }}
+          </ul>
+        {{ end }}
+        <div class="sidebar-sep"></div>
+        <a class="btn" href="{{ "/posts/" | relURL }}">← All posts</a>
+      </div>
+    </div>
+  {{ else }}
+    <div class="box">
+      <div class="box-header">About</div>
+      <div class="box-body">
+        <h2 class="sidebar-title">{{ site.Title }}</h2>
+        <p>{{ site.Params.description }}</p>
+        <a class="btn" href="{{ "index.xml" | relURL }}">{{ partial "icon.html" "rss" }} Subscribe via RSS</a>
+        <div class="sidebar-sep"></div>
+        <ul class="sidebar-stats">
+          <li><strong>{{ len $posts }}</strong> posts</li>
+          <li><strong>{{ len site.Taxonomies.tags }}</strong> tags</li>
+          {{ with $posts.ByDate.Reverse }}
+            <li><strong>Updated:</strong> {{ (index . 0).Date.Format "Jan 2, 2006" }}</li>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
+
+    {{ with site.Taxonomies.tags }}
+      <div class="box">
+        <div class="box-header">{{ partial "icon.html" "tag" }} Tags</div>
+        <div class="box-body">
+          <div class="labels">
+            {{ range first 24 .ByCount }}
+              <a class="label" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }} <span>{{ .Count }}</span></a>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    {{ end }}
+  {{ end }}
+
+  <div class="box">
+    <div class="box-header">{{ partial "icon.html" "repo" }} Repository</div>
+    <div class="box-body">
+      <p class="sidebar-note">Every post is a Markdown file. Pushing to <code>main</code> rebuilds the site with Hugo and publishes it through GitHub Pages.</p>
+      {{ with site.Params.repo }}<a class="btn" href="{{ . }}">View source</a>{{ end }}
+    </div>
+  </div>
+</aside>

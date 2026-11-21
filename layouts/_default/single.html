@@ -1,0 +1,43 @@
+{{ define "main" }}
+<div class="layout">
+  <div>
+    <article>
+      <div class="post-heading">
+        <h1>{{ .Title }}</h1>
+        <p class="post-submeta">
+          <span class="avatar" aria-hidden="true">{{ substr site.Title 0 1 }}</span>
+          {{ site.Params.author }}
+          posted on <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+          · {{ .ReadingTime }} min read
+        </p>
+      </div>
+
+      <div class="box comment-box">
+        <div class="box-header">
+          {{ partial "icon.html" "comment" }}
+          <span>{{ site.Params.author }} commented on {{ .Date.Format "Jan 2, 2006" }}</span>
+        </div>
+        <div class="box-body">
+          <div class="comment-body markdown-body">
+            {{ .Content }}
+          </div>
+          <div class="comment-footer">
+            <div class="labels">
+              {{ range .GetTerms "tags" }}
+                <a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+              {{ end }}
+            </div>
+            <span>{{ .WordCount }} words</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <nav class="post-nav" aria-label="Post navigation">
+      {{ with .PrevInSection }}<a class="btn" href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}
+      {{ with .NextInSection }}<a class="btn" style="margin-left:auto" href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}
+    </nav>
+  </div>
+  {{ partial "sidebar.html" . }}
+</div>
+{{ end }}

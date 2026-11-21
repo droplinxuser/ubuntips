@@ -1,0 +1,15 @@
+{{ $p := . }}
+<div class="list-row">
+  <span class="row-icon">{{ partial "icon.html" "issue" }}</span>
+  <div class="row-main">
+    <div class="row-title"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></div>
+    <div class="row-meta">posted {{ $p.Date.Format "Jan 2, 2006" }} · {{ $p.ReadingTime }} min read</div>
+    {{ with $p.Description }}<p class="row-desc">{{ . }}</p>{{ end }}
+    {{ with $p.GetTerms "tags" }}
+      <div class="labels">
+        {{ range . }}<a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
+      </div>
+    {{ end }}
+  </div>
+  <div class="row-time">{{ $p.ReadingTime }} min</div>
+</div>

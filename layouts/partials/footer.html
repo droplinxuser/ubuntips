@@ -1,0 +1,12 @@
+<footer class="gh-footer">
+  <div class="gh-footer-inner">
+    <div class="gh-footer-links">
+      <a href="{{ "/" | relURL }}">Home</a>
+      <a href="{{ "/posts/" | relURL }}">Posts</a>
+      <a href="{{ "/about/" | relURL }}">About</a>
+      <a href="{{ "index.xml" | relURL }}">RSS</a>
+      {{ with site.Params.repo }}<a href="{{ . }}">Source</a>{{ end }}
+    </div>
+    <span>© {{ now.Year }} {{ site.Title }} · Built with Hugo, deployed by GitHub Actions</span>
+  </div>
+</footer>

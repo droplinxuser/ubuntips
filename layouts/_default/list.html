@@ -1,0 +1,20 @@
+{{ define "main" }}
+<div class="layout">
+  <div>
+    <div class="list">
+      <div class="list-header">
+        <span>{{ partial "icon.html" "issue" }} {{ .Title }}</span>
+        <span>{{ len .Pages }} posts</span>
+      </div>
+      {{ $paginator := .Paginate .Pages }}
+      {{ range $paginator.Pages }}
+        {{ partial "post-row.html" . }}
+      {{ else }}
+        <div class="list-row"><div class="row-main"><div class="row-title">No posts yet.</div></div></div>
+      {{ end }}
+    </div>
+    {{ template "_internal/pagination.html" . }}
+  </div>
+  {{ partial "sidebar.html" . }}
+</div>
+{{ end }}

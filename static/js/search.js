@@ -1,0 +1,125 @@
+(function () {
+  var input = document.getElementById("site-search");
+  var panel = document.getElementById("search-results");
+  if (!input || !panel) return;
+
+  var posts = null;
+  var loading = false;
+  var results = [];
+  var active = -1;
+
+  function esc(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function load() {
+    if (posts || loading) return;
+    loading = true;
+    fetch(input.dataset.index || "/index.json")
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        posts = Array.isArray(data) ? data : [];
+      })
+      .catch(function () {
+        posts = [];
+      })
+      .then(function () {
+        loading = false;
+        if (input.value.trim()) render(input.value);
+      });
+  }
+
+  function close() {
+    panel.classList.remove("open");
+    panel.innerHTML = "";
+    results = [];
+    active = -1;
+  }
+
+  function render(query) {
+    var q = query.trim().toLowerCase();
+    if (!q) {
+      close();
+      return;
+    }
+    if (!posts) {
+      load();
+      return;
+    }
+
+    results = posts
+      .filter(function (post) {
+        var haystack = [post.title, post.description, (post.tags || []).join(" "), post.markdown].join(" ").toLowerCase();
+        return haystack.indexOf(q) !== -1;
+      })
+      .slice(0, 8);
+
+    active = results.length ? 0 : -1;
+
+    if (!results.length) {
+      panel.innerHTML = '<div class="r-empty">No posts match &ldquo;' + esc(query) + '&rdquo;</div>';
+    } else {
+      panel.innerHTML = results
+        .map(function (post, i) {
+          return (
+            '<a href="' + esc(post.url) + '" class="' + (i === 0 ? "active" : "") + '" role="option">' +
+            '<span class="r-title">' + esc(post.title) + "</span>" +
+            '<span class="r-meta">' + esc(post.date) + " · " + esc((post.tags || []).join(", ")) + "</span>" +
+            "</a>"
+          );
+        })
+        .join("");
+    }
+    panel.classList.add("open");
+  }
+
+  function move(delta) {
+    if (!results.length) return;
+    active = (active + delta + results.length) % results.length;
+    var links = panel.querySelectorAll("a");
+    for (var i = 0; i < links.length; i++) {
+      links[i].classList.toggle("active", i === active);
+    }
+  }
+
+  input.addEventListener("focus", load);
+  input.addEventListener("input", function () {
+    render(input.value);
+  });
+
+  input.addEventListener("keydown", function (event) {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      move(1);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      move(-1);
+    } else if (event.key === "Enter") {
+      if (active >= 0 && results[active]) {
+        event.preventDefault();
+        window.location.href = results[active].url;
+      }
+    } else if (event.key === "Escape") {
+      input.value = "";
+      close();
+      input.blur();
+    }
+  });
+
+  input.addEventListener("blur", function () {
+    window.setTimeout(close, 150);
+  });
+
+  document.addEventListener("keydown", function (event) {
+    var tag = (event.target.tagName || "").toLowerCase();
+    if (event.key === "/" && tag !== "input" && tag !== "textarea") {
+      event.preventDefault();
+      input.focus();
+    }
+  });
+})();
