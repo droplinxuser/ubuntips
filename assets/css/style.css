@@ -562,6 +562,13 @@ a:hover {
   margin-top: 2px;
 }
 
+.pinned {
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--accent-fg);
+  vertical-align: -2px;
+}
+
 /* ---------- Labels ---------- */
 
 .labels {

@@ -1,12 +1,17 @@
 {{ define "main" }}
+{{- $all := where site.RegularPages "Section" "posts" -}}
+{{- $pinned := where $all "Params.sticky" true -}}
+{{- $rest := where $all "Params.sticky" "!=" true -}}
+{{- $sorted := $pinned.ByDate.Reverse -}}
+{{- range $rest.ByDate.Reverse -}}{{- $sorted = $sorted | append . -}}{{- end -}}
 <div class="layout">
   <div>
     <div class="list">
       <div class="list-header">
         <span>{{ partial "icon.html" "issue" }} {{ .Title }}</span>
-        <span>{{ len .Pages }} posts</span>
+        <span>{{ len $all }} posts</span>
       </div>
-      {{ $paginator := .Paginator }}
+      {{ $paginator := .Paginate $sorted }}
       {{ range $paginator.Pages }}
         {{ partial "post-row.html" . }}
       {{ else }}

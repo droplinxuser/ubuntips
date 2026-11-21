@@ -16,13 +16,6 @@
 <link rel="canonical" href="{{ .Permalink }}">
 {{ with .OutputFormats.Get "rss" }}<link rel="alternate" type="application/rss+xml" href="{{ .RelPermalink }}" title="{{ site.Title }}">{{ end }}
 
-{{ if in (slice "section" "taxonomy" "term") .Kind }}
-  {{ with .Paginator }}
-    {{ with .Prev }}<link rel="prev" href="{{ .URL }}">{{ end }}
-    {{ with .Next }}<link rel="next" href="{{ .URL }}">{{ end }}
-  {{ end }}
-{{ end }}
-
 <meta name="theme-color" content="{{ site.Params.themeColorLight }}" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="{{ site.Params.themeColorDark }}" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="light dark">

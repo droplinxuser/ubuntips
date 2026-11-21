@@ -23,6 +23,7 @@ title: "Post title"
 date: 2026-11-21T09:00:00+08:00
 description: "One sentence used in listings, search and social previews."
 tags: ["ubuntu", "nginx"]
+# sticky: true   # pins the post above all dated posts on home and /posts/
 ---
 ```
 
