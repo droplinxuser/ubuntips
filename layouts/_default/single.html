@@ -50,7 +50,10 @@
                   <a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
                 {{ end }}
               </div>
-              <span>{{ .WordCount }} words</span>
+              <div class="comment-actions">
+                <button class="share-btn" type="button" data-share-title="{{ .Title }}" data-share-url="{{ .Permalink }}">Share</button>
+                <span>{{ .WordCount }} words</span>
+              </div>
             </div>
           </div>
         </div>

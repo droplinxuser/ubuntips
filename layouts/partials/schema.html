@@ -47,8 +47,10 @@
     (dict "@type" "ListItem" "position" 1 "name" "Home" "item" site.BaseURL)
     (dict "@type" "ListItem" "position" 2 "name" $page.Title "item" $page.Permalink)
   -}}
+  {{- $webType := "WebPage" -}}
+  {{- if eq $page.RelPermalink "/about/" }}{{ $webType = "AboutPage" }}{{ end -}}
   {{- $webpage := dict
-    "@type" "WebPage"
+    "@type" $webType
     "name" $page.Title
     "description" $description
     "url" $page.Permalink

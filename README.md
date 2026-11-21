@@ -70,11 +70,14 @@ tools will fail the build.
   and `#` anchors for deep links.
 - **System/light/dark theme** toggle that cycles through all three. The explicit
   choice is stored in `localStorage`; the script that applies it loads before
-  the stylesheet so there is no flash.
+  the stylesheet so there is no flash, and it keeps the browser's
+  `theme-color` in sync.
 - **Copy buttons** on every code block.
 - **Related posts** (by shared tags) with a "More posts" fallback.
 - **Client-side search** with keyboard navigation (`/`, arrows, Enter, Escape),
-  ARIA combobox semantics, an announced result count, and shareable `?q=` URLs.
+  ARIA combobox semantics, an announced result count, ranked results (title
+  matches before body matches), and shareable `?q=` URLs.
+- **Share button** on every post (Web Share API, clipboard fallback).
 - **Pinned posts** via `sticky: true`.
 - **Tag index** at `/tags/` with counts, and clean plain pages (About) without
   post chrome.
@@ -122,8 +125,9 @@ Chrome if you want them locally.
 - `layouts/partials/head.html` emits canonical, robots, Open Graph, Twitter,
   theme-color, a CSP and the stylesheet/script tags.
 - `layouts/partials/schema.html` emits JSON-LD: `BlogPosting` + `BreadcrumbList`
-  on posts, `WebPage` on plain pages, `CollectionPage` + `ItemList` on listings,
-  and `WebSite` + `Organization` on the home page, with `dateModified` from git.
+  on posts, `AboutPage`/`WebPage` on plain pages, `CollectionPage` + `ItemList`
+  on listings, and `WebSite` + `Organization` on the home page, with
+  `dateModified` from git.
 - Every page advertises the site feed (or its section feed) for RSS discovery.
 - Icons: `favicon.ico`, `favicon.svg`, PNG fallbacks, `apple-touch-icon`,
   `site.webmanifest`.

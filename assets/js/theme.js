@@ -11,6 +11,19 @@
     return "system";
   }
 
+  function isDark() {
+    if (current() === "dark") return true;
+    if (current() === "light") return false;
+    return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+
+  var themeColor = document.getElementById("theme-color");
+  function syncThemeColor() {
+    if (!themeColor) return;
+    themeColor.setAttribute("content", isDark() ? themeColor.dataset.dark : themeColor.dataset.light);
+  }
+  syncThemeColor();
+
   function nextOf(state) {
     return state === "system" ? "light" : state === "light" ? "dark" : "system";
   }
@@ -41,13 +54,17 @@
         } catch (e) {}
       }
       paint(button);
+      syncThemeColor();
     });
 
     if (window.matchMedia) {
       var query = window.matchMedia("(prefers-color-scheme: dark)");
       if (query.addEventListener) {
         query.addEventListener("change", function () {
-          if (!root.dataset.theme) paint(button);
+          if (!root.dataset.theme) {
+            paint(button);
+            syncThemeColor();
+          }
         });
       }
     }

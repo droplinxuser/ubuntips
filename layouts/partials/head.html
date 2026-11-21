@@ -32,8 +32,7 @@
 {{ with .OutputFormats.Get "rss" }}{{ $feed = .Permalink }}{{ end }}
 <link rel="alternate" type="application/rss+xml" href="{{ $feed }}" title="{{ site.Title }}">
 
-<meta name="theme-color" content="{{ site.Params.themeColorLight }}" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="{{ site.Params.themeColorDark }}" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" id="theme-color" content="{{ site.Params.themeColorLight }}" data-light="{{ site.Params.themeColorLight }}" data-dark="{{ site.Params.themeColorDark }}">
 <meta name="color-scheme" content="light dark">
 
 <meta property="og:type" content="{{ if $isPost }}article{{ else }}website{{ end }}">

@@ -68,11 +68,28 @@
     }
 
     results = posts
-      .filter(function (post) {
-        var haystack = [post.title, post.description, (post.tags || []).join(" "), post.text].join(" ").toLowerCase();
-        return haystack.indexOf(q) !== -1;
+      .map(function (post) {
+        var title = (post.title || "").toLowerCase();
+        var tags = (post.tags || []).join(" ").toLowerCase();
+        var description = (post.description || "").toLowerCase();
+        var body = (post.text || "").toLowerCase();
+        var score = 0;
+        if (title.indexOf(q) !== -1) score += 100;
+        if (tags.indexOf(q) !== -1) score += 50;
+        if (description.indexOf(q) !== -1) score += 25;
+        if (body.indexOf(q) !== -1) score += 10;
+        return { post: post, score: score };
       })
-      .slice(0, 8);
+      .filter(function (entry) {
+        return entry.score > 0;
+      })
+      .sort(function (a, b) {
+        return b.score - a.score || (a.post.date < b.post.date ? 1 : -1);
+      })
+      .slice(0, 8)
+      .map(function (entry) {
+        return entry.post;
+      });
 
     if (!results.length) {
       panel.innerHTML = '<div class="r-empty">No posts match &ldquo;' + esc(query) + '&rdquo;</div>';

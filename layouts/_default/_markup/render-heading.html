@@ -1,1 +1,1 @@
-<h{{ .Level }} id="{{ .Anchor }}" class="heading-anchor">{{ .Text }}<a class="anchor" href="#{{ .Anchor }}" aria-label="Link to this section">#</a></h{{ .Level }}>
+<h{{ .Level }} id="{{ .Anchor }}" class="heading-anchor">{{ .Text }}<a class="anchor" href="#{{ .Anchor }}" aria-label="{{ printf "Link to section: %s" (.Text | plainify) }}">#</a></h{{ .Level }}>

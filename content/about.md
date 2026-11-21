@@ -1,6 +1,7 @@
 ---
 title: "About"
 date: 2026-11-21T09:00:00+08:00
+description: "What Ubuntu Tips covers, how it is published, and where to send corrections."
 ---
 
 Ubuntu Tips is a notebook about running Ubuntu servers: provisioning, tuning, hardening, and the occasional thing that broke anyway.

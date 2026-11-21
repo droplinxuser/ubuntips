@@ -43,6 +43,44 @@ document.addEventListener("DOMContentLoaded", function () {
     wrap.appendChild(button);
   });
 
+  function copyText(text, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () {});
+      return;
+    }
+    var area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    try {
+      document.execCommand("copy");
+      done();
+    } catch (e) {}
+    area.remove();
+  }
+
+  document.querySelectorAll(".share-btn").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var url = button.dataset.shareUrl || window.location.href;
+      var title = button.dataset.shareTitle || document.title;
+      var label = button.textContent;
+
+      if (navigator.share) {
+        navigator.share({ title: title, url: url }).catch(function () {});
+      } else {
+        copyText(url, function () {
+          button.textContent = "Link copied";
+          window.setTimeout(function () {
+            button.textContent = label;
+          }, 1500);
+        });
+      }
+    });
+  });
+
   var toc = document.querySelector("details.toc");
   if (toc && window.matchMedia && window.matchMedia("(max-width: 768px)").matches) {
     toc.open = false;
