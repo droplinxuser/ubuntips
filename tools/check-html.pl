@@ -30,7 +30,7 @@ for my $file (sort @html) {
 
     while ($html =~ /<img\b[^>]*>/gi) {
         my $tag = $&;
-        push @problems, "img without alt: $tag" unless $tag =~ /\balt\s*=/i;
+        push @problems, "img without alt: $tag" unless $tag =~ /\balt\b/i;
     }
 
     my %seen;
