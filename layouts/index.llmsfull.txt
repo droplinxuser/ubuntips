@@ -1,0 +1,21 @@
+# {{ site.Title }} — full text
+
+> {{ site.Params.description }}
+
+Canonical: {{ site.BaseURL }}
+Author: {{ site.Params.author }}
+Source: {{ site.Params.repo }}
+
+{{ range (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+---
+
+## {{ .Title }}
+
+- URL: {{ .Permalink }}
+- Published: {{ .Date.Format "2006-01-02" }}
+- Updated: {{ .Lastmod.Format "2006-01-02" }}
+- Tags: {{ $tags := slice }}{{ range .GetTerms "tags" }}{{ $tags = $tags | append .LinkTitle }}{{ end }}{{ delimit $tags ", " }}
+
+{{ .Plain }}
+
+{{ end }}

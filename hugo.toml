@@ -62,8 +62,23 @@ enableGitInfo = true
 [mediaTypes."application/feed+json"]
   suffixes = ["json"]
 
+[mediaTypes."text/plain"]
+  suffixes = ["txt"]
+
+[outputFormats.LLMS]
+  mediaType = "text/plain"
+  baseName = "llms"
+  isPlainText = true
+  notAlternative = true
+
+[outputFormats.LLMSFULL]
+  mediaType = "text/plain"
+  baseName = "llms-full"
+  isPlainText = true
+  notAlternative = true
+
 [outputs]
-  home = ["HTML", "RSS", "JSON", "JSONFEED"]
+  home = ["HTML", "RSS", "JSON", "JSONFEED", "LLMS", "LLMSFULL"]
 
 [outputFormats.JSONFEED]
   mediaType = "application/feed+json"

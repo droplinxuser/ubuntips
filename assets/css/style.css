@@ -330,10 +330,6 @@ a:hover {
   align-items: start;
 }
 
-.layout.single-column {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 @media (max-width: 1024px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
@@ -643,16 +639,6 @@ a:hover {
   text-decoration: none;
 }
 
-.btn-primary {
-  color: #ffffff;
-  background: var(--success-emphasis);
-  border-color: rgba(31, 35, 40, 0.15);
-}
-
-.btn-primary:hover {
-  background: var(--success-fg);
-}
-
 /* ---------- Single post ---------- */
 
 .post-heading h1 {
@@ -660,19 +646,6 @@ a:hover {
   font-weight: 600;
   line-height: 1.25;
   margin: 0 0 8px;
-}
-
-.post-state {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  margin-bottom: 12px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #ffffff;
-  background: var(--success-emphasis);
-  border-radius: 2em;
 }
 
 .post-submeta {
@@ -1030,9 +1003,6 @@ a:hover {
 @media (max-width: 480px) {
   .gh-nav {
     font-size: 13px;
-  }
-  .hero h1 {
-    font-size: 1.5rem;
   }
   .post-nav {
     flex-direction: column;
@@ -1482,4 +1452,11 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   .gh-search input {
     padding-right: 12px;
   }
+}
+
+mark {
+  padding: 0 1px;
+  color: inherit;
+  background: var(--accent-subtle);
+  border-radius: 2px;
 }

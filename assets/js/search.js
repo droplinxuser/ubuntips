@@ -16,6 +16,21 @@
     });
   }
 
+  function highlight(text, query) {
+    var source = String(text == null ? "" : text);
+    var needle = query.trim();
+    if (!needle) return esc(source);
+    var at = source.toLowerCase().indexOf(needle.toLowerCase());
+    if (at === -1) return esc(source);
+    return (
+      esc(source.slice(0, at)) +
+      "<mark>" +
+      esc(source.slice(at, at + needle.length)) +
+      "</mark>" +
+      esc(source.slice(at + needle.length))
+    );
+  }
+
   function load() {
     if (posts || loading) return;
     loading = true;
@@ -110,7 +125,7 @@
         .map(function (post, i) {
           return (
             '<a href="' + esc(post.url) + '" id="search-opt-' + i + '" role="option" aria-selected="false">' +
-            '<span class="r-title">' + esc(post.title) + "</span>" +
+            '<span class="r-title">' + highlight(post.title, query) + "</span>" +
             '<span class="r-meta">' + esc(post.date) + " · " + esc((post.tags || []).join(", ")) + "</span>" +
             "</a>"
           );

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Ubuntu Tips</ShortName>
+  <Description>Search provisioning, tuning and hardening notes on ubuntips.com</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="48" height="48" type="image/png">https://ubuntips.com/img/icon-48.png</Image>
+  <Url type="text/html" template="https://ubuntips.com/?q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml" rel="self" template="https://ubuntips.com/opensearch.xml"/>
+</OpenSearchDescription>

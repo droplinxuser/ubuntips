@@ -75,8 +75,8 @@ tools will fail the build.
 - **Copy buttons** on every code block.
 - **Related posts** (by shared tags) with a "More posts" fallback.
 - **Client-side search** with keyboard navigation (`/`, arrows, Enter, Escape),
-  ARIA combobox semantics, an announced result count, ranked results (title
-  matches before body matches), and shareable `?q=` URLs.
+  ARIA combobox semantics, an announced result count, ranked results with the
+  matched text highlighted, and shareable `?q=` URLs.
 - **Share button** on every post (Web Share API, clipboard fallback).
 - **Pinned posts** via `sticky: true`.
 - **Tag index** at `/tags/` with counts, and clean plain pages (About) without
@@ -135,6 +135,19 @@ Chrome if you want them locally.
   `site.webmanifest`.
 - The author for every post comes from `params.author` (`Draft`), so new posts
   inherit it without front matter.
+
+## Machine-readable files
+
+| Path | Purpose |
+|---|---|
+| `/sitemap.xml` | URLs, per-kind priorities, git `lastmod` |
+| `/index.xml` | Full-text RSS |
+| `/feed.json` | JSON Feed 1.1 |
+| `/index.json` | Search index (used by the header box) |
+| `/llms.txt` | Compact map of the site for AI agents |
+| `/llms-full.txt` | Every post in plain text |
+| `/opensearch.xml` | Browser search integration (uses `?q=`) |
+| `/.well-known/security.txt` | Vulnerability-report contact |
 
 ## Caching and security headers
 

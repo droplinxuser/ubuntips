@@ -1,0 +1,21 @@
+# {{ site.Title }}
+
+> {{ site.Params.description }}
+
+A blog about provisioning, tuning and hardening Ubuntu servers. Every post is
+Markdown in a public git repository, published as a static site.
+
+- Canonical: {{ site.BaseURL }}
+- Feeds: {{ "index.xml" | absURL }} (RSS), {{ "feed.json" | absURL }} (JSON Feed)
+- Full text: {{ "llms-full.txt" | absURL }}
+- Source: {{ site.Params.repo }}
+- Sitemap: {{ "sitemap.xml" | absURL }}
+
+## Posts
+
+{{ range (where site.RegularPages "Section" "posts").ByDate.Reverse -}}
+- [{{ .Title }}]({{ .Permalink }}): {{ .Description | default (.Summary | plainify) }}
+{{ end }}
+## Pages
+
+- [About]({{ "/about/" | absURL }}): what this site covers and how it is published.
