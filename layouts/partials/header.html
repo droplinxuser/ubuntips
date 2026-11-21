@@ -22,6 +22,7 @@
     <div class="gh-search" role="search">
       <span class="search-icon">{{ partial "icon.html" "search" }}</span>
       <input id="site-search" type="search" placeholder="Search posts…" autocomplete="off" spellcheck="false" aria-label="Search posts" aria-controls="search-results" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-haspopup="listbox" aria-keyshortcuts="/" title="Press / to search" data-index="{{ "index.json" | relURL }}">
+      <kbd class="search-kbd" aria-hidden="true">/</kbd>
       <div class="gh-search-results" id="search-results" role="listbox" aria-label="Search results"></div>
       <div class="visually-hidden" id="search-status" role="status" aria-live="polite"></div>
     </div>

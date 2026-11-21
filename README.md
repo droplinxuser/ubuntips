@@ -83,7 +83,8 @@ tools will fail the build.
   post chrome.
 - **Edit this page** link on every post, pointing at the GitHub editor.
 - **404 page** with search and the latest posts.
-- **Skip to content** link, semantic headings and focus styles.
+- **Skip to content** link that moves keyboard focus to `<main>`, semantic
+  headings and focus styles.
 - **Full-text RSS and JSON Feed** (`/index.xml`, `/feed.json`), both discoverable
   from every page.
 
@@ -171,12 +172,15 @@ page's structured data advertises that URL as a `SearchAction`.
 generates social cards, builds the final site, checks that every internal link
 resolves, and deploys.
 
-Two guards run before deploy:
+Three guards run before deploy:
 
 - Hugo fails the build when `--printPathWarnings` reports duplicate target
   paths.
 - `tools/check-links.pl` fails on any internal `href`/`src` (including every
   `srcset` candidate) that does not map to a file in `public/`, and on any
   `#fragment` with no matching `id` in the target page.
+- `tools/check-html.pl` fails on a missing or duplicate `<h1>`, an `<img>`
+  without `alt`, a duplicate `id`, or a skipped heading level (Hugo's redirect
+  stubs are skipped).
 
 Dependabot updates the action versions weekly.

@@ -1451,3 +1451,35 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
 .start-here {
   font-size: 15px;
 }
+
+.gh-search input {
+  padding-right: 34px;
+}
+
+.search-kbd {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--header-muted);
+  border: 1px solid var(--header-border);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.gh-search:focus-within .search-kbd {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .search-kbd {
+    display: none;
+  }
+  .gh-search input {
+    padding-right: 12px;
+  }
+}

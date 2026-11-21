@@ -22,6 +22,8 @@
   "feed_url" ("feed.json" | absURL)
   "description" site.Params.description
   "language" (site.Language.Locale | default "en-US")
+  "icon" (absURL "/img/icon-512.png")
+  "favicon" (absURL "/img/icon-48.png")
   "authors" (slice (dict "name" site.Params.author "url" (absURL "/about/")))
   "items" $items
 -}}

@@ -62,6 +62,9 @@ jobs:
       - name: Check internal links
         run: perl tools/check-links.pl public
 
+      - name: Check HTML structure
+        run: perl tools/check-html.pl public
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
