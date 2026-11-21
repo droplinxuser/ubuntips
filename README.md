@@ -45,27 +45,66 @@ cp /tmp/hugo-pkg/Payload/hugo .tools/hugo && chmod +x .tools/hugo
 |---|---|
 | `content/posts/` | Markdown posts |
 | `layouts/` | Templates (no external theme) |
-| `static/css/`, `static/js/` | Styles and the search box |
+| `assets/css/`, `assets/js/` | Styles and search box, minified + fingerprinted |
+| `static/img/` | Social cards, icons, thumbnails |
+| `static/_headers` | Cache/security policy for header-capable hosts |
+| `tools/gen-og-cards.sh` | Renders per-post OG cards and thumbnails in CI |
 | `static/CNAME` | Keeps the custom domain on every deploy |
 | `.github/workflows/pages.yml` | Build and deploy to GitHub Pages |
 
 ## Social previews
 
-`static/img/og-default.png` (1200×630) is the fallback card used by Open Graph,
-Twitter and JSON-LD. Override it per page:
+Each post gets its own 1200×630 card, generated during CI by
+`tools/gen-og-cards.sh`: a seed `hugo` build writes `public/index.json`, the
+script renders one HTML card per post and screenshots it with headless Chrome,
+then ImageMagick produces a 600×315 thumbnail. Both files land in
+`static/img/og/` (git-ignored), and the templates pick them up automatically.
+
+- Card URL: `/img/og/<slug>.png`
+- Thumbnail: `/img/og/<slug>-thumb.png`, used in post lists
+- Fallback: `static/img/og-default.png`
+
+Override for a single post with front matter:
 
 ```yaml
----
-title: "Post title"
-date: 2026-11-21T09:00:00+08:00
-images: ["/img/my-post-card.png"]
-ogImageAlt: "Optional alt text for the card"
----
+images: ["/img/custom-card.png"]
+ogImageAlt: "Alt text for the card"
 ```
 
-The default card is rendered from `tools/og-card.html` (a 1200×630 HTML page).
-To regenerate it, serve the site, open `tools/og-card.html` at a viewport wider
-than 1200×630, screenshot it, centre-crop to 2400×1260 and resize to 1200×630.
+Locally, no cards exist, so pages fall back to `og-default.png` and lists omit
+the thumbnail. That is expected; run `./tools/gen-og-cards.sh` on a machine with
+Chrome if you want them locally.
+
+## SEO
+
+- `layouts/robots.txt` allows everything and points to the sitemap.
+- `hugo.toml` sets sitemap `changefreq`/`priority`; Hugo emits `sitemap.xml`,
+  `index.xml` and `index.json`.
+- `layouts/partials/head.html` emits canonical, robots, Open Graph, Twitter and
+  theme-color tags, plus `rel=prev/next` on paginated sections.
+- `layouts/partials/schema.html` emits JSON-LD: `BlogPosting` + `BreadcrumbList`
+  on posts, `WebSite` + `Organization` on the home page.
+- Icons: `favicon.svg`, PNG fallbacks, `apple-touch-icon`, `site.webmanifest`.
+- The author for every post comes from `params.author` (`Draft`), so new posts
+  inherit it without front matter.
+
+## Caching
+
+`static/_headers` carries the intended policy:
+
+| Path | Cache |
+|---|---|
+| `/*.html`, `/` | `max-age=0, must-revalidate` |
+| `/*.xml`, `/*.json` | `max-age=600` |
+| `/css/*`, `/js/*` | 1 year, immutable (filenames are fingerprinted) |
+| `/img/*` | 1 week, stale-while-revalidate |
+
+**GitHub Pages ignores `_headers`** and always answers with
+`cache-control: max-age=600`. The fingerprinted asset names still prevent
+stale CSS/JS after a deploy, because the URL changes. To get the full policy,
+either serve the same artifact through Cloudflare (proxy the DNS records, SSL
+mode *Full*) and add a Cache Rule for `/css/*` and `/js/*`, or move hosting to
+Cloudflare Pages, which reads `_headers` directly.
 
 ## Search
 

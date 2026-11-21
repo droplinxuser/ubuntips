@@ -1,32 +1,56 @@
 {{- $page := .page -}}
 {{- $description := .description -}}
 {{- $image := .image -}}
-{{- $author := dict "@type" "Person" "name" site.Params.author -}}
-{{- $publisher := dict "@type" "Organization" "name" site.Title "url" site.BaseURL -}}
+{{- $authorName := site.Params.author | default "Draft" -}}
+{{- $logo := absURL "/img/icon-512.png" -}}
+{{- $author := dict "@type" "Person" "name" $authorName "url" (absURL "/about/") -}}
+{{- $publisher := dict "@type" "Organization" "name" site.Title "url" site.BaseURL "logo" (dict "@type" "ImageObject" "url" $logo) -}}
+{{- $blog := dict "@type" "Blog" "name" site.Title "url" site.BaseURL -}}
+
 {{- if $page.IsPage -}}
-  {{- $schema := dict
-    "@context" "https://schema.org"
+  {{- $keywords := slice -}}
+  {{- range $page.GetTerms "tags" -}}
+    {{- $keywords = $keywords | append .LinkTitle -}}
+  {{- end -}}
+
+  {{- $crumbs := slice (dict "@type" "ListItem" "position" 1 "name" "Home" "item" site.BaseURL) -}}
+  {{- if eq $page.Section "posts" -}}
+    {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" "Posts" "item" (absURL "/posts/")) -}}
+    {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 3 "name" $page.Title "item" $page.Permalink) -}}
+  {{- else -}}
+    {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $page.Title "item" $page.Permalink) -}}
+  {{- end -}}
+
+  {{- $article := dict
     "@type" "BlogPosting"
     "headline" $page.Title
+    "name" $page.Title
     "description" $description
     "datePublished" ($page.Date.Format "2006-01-02T15:04:05Z07:00")
     "dateModified" ($page.Lastmod.Format "2006-01-02T15:04:05Z07:00")
     "url" $page.Permalink
     "mainEntityOfPage" (dict "@type" "WebPage" "@id" $page.Permalink)
-    "image" $image
+    "image" (slice (dict "@type" "ImageObject" "url" $image "width" 1200 "height" 630))
+    "thumbnailUrl" $image
     "author" $author
     "publisher" $publisher
     "inLanguage" (site.Language.Locale | default "en-US")
+    "isPartOf" $blog
+    "wordCount" $page.WordCount
+    "articleSection" $page.Section
+    "keywords" $keywords
   -}}
-  <script type="application/ld+json">{{ $schema | jsonify | safeJS }}</script>
+  {{- $breadcrumb := dict "@type" "BreadcrumbList" "itemListElement" $crumbs -}}
+  <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" (slice $article $breadcrumb) | jsonify | safeJS }}</script>
 {{- else -}}
-  {{- $schema := dict
-    "@context" "https://schema.org"
+  {{- $website := dict
     "@type" "WebSite"
     "name" site.Title
+    "alternateName" (printf "%s — %s" site.Title site.Params.description)
     "description" $description
     "url" site.BaseURL
     "inLanguage" (site.Language.Locale | default "en-US")
+    "publisher" $publisher
   -}}
-  <script type="application/ld+json">{{ $schema | jsonify | safeJS }}</script>
+  <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" (slice $website $publisher) | jsonify | safeJS }}</script>
 {{- end -}}

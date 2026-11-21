@@ -36,6 +36,12 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      - name: Seed build (post list for social cards)
+        run: hugo --quiet
+
+      - name: Generate social cards
+        run: ./tools/gen-og-cards.sh public/index.json
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5

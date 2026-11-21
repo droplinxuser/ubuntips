@@ -1,0 +1,20 @@
+{{- $img := site.Params.ogImage | default "/img/og-default.png" -}}
+{{- $thumb := "" -}}
+{{- $alt := site.Params.ogImageAlt | default (printf "%s — %s" site.Title site.Params.description) -}}
+{{- with .Params.ogImageAlt }}{{ $alt = . }}{{ end -}}
+{{- with .Params.images -}}
+  {{- $img = index . 0 -}}
+{{- else -}}
+  {{- if and .IsPage .File -}}
+    {{- $slug := path.Base .RelPermalink -}}
+    {{- if os.FileExists (printf "static/img/og/%s.png" $slug) -}}
+      {{- $img = printf "/img/og/%s.png" $slug -}}
+      {{- if os.FileExists (printf "static/img/og/%s-thumb.png" $slug) -}}
+        {{- $thumb = printf "/img/og/%s-thumb.png" $slug -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $abs := $img -}}
+{{- if not (hasPrefix $img "http") }}{{ $abs = $img | absURL }}{{ end -}}
+{{- return (dict "url" $abs "path" $img "thumb" $thumb "alt" $alt) -}}

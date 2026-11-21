@@ -6,7 +6,7 @@
         <span>{{ partial "icon.html" "issue" }} {{ .Title }}</span>
         <span>{{ len .Pages }} posts</span>
       </div>
-      {{ $paginator := .Paginate .Pages }}
+      {{ $paginator := .Paginator }}
       {{ range $paginator.Pages }}
         {{ partial "post-row.html" . }}
       {{ else }}

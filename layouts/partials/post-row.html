@@ -1,15 +1,18 @@
-{{ $p := . }}
+{{ $og := partial "og-image.html" . }}
 <div class="list-row">
   <span class="row-icon">{{ partial "icon.html" "issue" }}</span>
   <div class="row-main">
-    <div class="row-title"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></div>
-    <div class="row-meta">posted {{ $p.Date.Format "Jan 2, 2006" }} · {{ $p.ReadingTime }} min read</div>
-    {{ with $p.Description }}<p class="row-desc">{{ . }}</p>{{ end }}
-    {{ with $p.GetTerms "tags" }}
+    <div class="row-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></div>
+    <div class="row-meta">posted {{ .Date.Format "Jan 2, 2006" }} · {{ .ReadingTime }} min read</div>
+    {{ with .Description }}<p class="row-desc">{{ . }}</p>{{ end }}
+    {{ with .GetTerms "tags" }}
       <div class="labels">
         {{ range . }}<a class="label" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
       </div>
     {{ end }}
   </div>
-  <div class="row-time">{{ $p.ReadingTime }} min</div>
+  {{ with $og.thumb }}
+    <img class="row-thumb" src="{{ . }}" width="112" height="59" loading="lazy" decoding="async" alt="">
+  {{ end }}
+  <div class="row-time">{{ .ReadingTime }} min</div>
 </div>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# No crawlable admin, API or search endpoints exist.
+Disallow: /404.html
+
+Sitemap: {{ "sitemap.xml" | absURL }}
