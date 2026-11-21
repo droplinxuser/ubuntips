@@ -7,11 +7,9 @@
 {{- else -}}
   {{- if and .IsPage .File -}}
     {{- $slug := path.Base .RelPermalink -}}
-    {{- if os.FileExists (printf "static/img/og/%s.png" $slug) -}}
-      {{- $img = printf "/img/og/%s.png" $slug -}}
-      {{- if os.FileExists (printf "static/img/og/%s-thumb.png" $slug) -}}
-        {{- $thumb = printf "/img/og/%s-thumb.png" $slug -}}
-      {{- end -}}
+    {{- with resources.Get (printf "og/%s.png" $slug) -}}
+      {{- $img = .RelPermalink -}}
+      {{- $thumb = (.Resize "320x168 png").RelPermalink -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}

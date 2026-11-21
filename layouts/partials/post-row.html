@@ -2,7 +2,7 @@
 <div class="list-row">
   <span class="row-icon">{{ partial "icon.html" "issue" }}</span>
   <div class="row-main">
-    <div class="row-title">{{ if .Params.sticky }}<span class="pinned" title="Pinned post">{{ partial "icon.html" "pin" }}</span>{{ end }}<a href="{{ .RelPermalink }}">{{ .Title }}</a></div>
+    <h2 class="row-title">{{ if .Params.sticky }}<span class="pinned" title="Pinned post">{{ partial "icon.html" "pin" }}<span class="visually-hidden">Pinned: </span></span>{{ end }}<a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
     <div class="row-meta">posted {{ .Date.Format "Jan 2, 2006" }} · {{ .ReadingTime }} min read</div>
     {{ with .Description }}<p class="row-desc">{{ . }}</p>{{ end }}
     {{ with .GetTerms "tags" }}

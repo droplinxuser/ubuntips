@@ -37,7 +37,12 @@ jobs:
           fetch-depth: 0
 
       - name: Seed build (post list for social cards)
-        run: hugo --quiet
+        run: |
+          hugo --quiet --printPathWarnings 2>&1 | tee "${{ runner.temp }}/hugo-build.txt"
+          if grep -q "duplicate target paths" "${{ runner.temp }}/hugo-build.txt"; then
+            echo "::error::Hugo reported duplicate target paths"
+            exit 1
+          fi
 
       - name: Generate social cards
         run: ./tools/gen-og-cards.sh public/index.json
@@ -53,6 +58,9 @@ jobs:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
         run: hugo --minify --gc
+
+      - name: Check internal links
+        run: perl tools/check-links.pl public
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

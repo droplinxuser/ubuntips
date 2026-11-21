@@ -1,6 +1,6 @@
 <header class="gh-header">
   <div class="gh-header-inner">
-    <a class="gh-brand" href="{{ "/" | relURL }}" aria-label="{{ site.Title }} home">
+    <a class="gh-brand" href="{{ "/" | relURL }}">
       {{ partial "icon.html" "mark" }}
       <span>ubuntips</span>
     </a>
@@ -9,9 +9,13 @@
         <a href="{{ .URL }}">{{ .Name }}</a>
       {{ end }}
     </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme">
+      <span class="icon-sun" hidden>{{ partial "icon.html" "sun" }}</span>
+      <span class="icon-moon">{{ partial "icon.html" "moon" }}</span>
+    </button>
     <div class="gh-search" role="search">
       <span class="search-icon">{{ partial "icon.html" "search" }}</span>
-      <input id="site-search" type="search" placeholder="Search posts…" autocomplete="off" spellcheck="false" aria-label="Search posts" aria-controls="search-results" data-index="{{ "index.json" | relURL }}">
+      <input id="site-search" type="search" placeholder="Search posts…" autocomplete="off" spellcheck="false" aria-label="Search posts" aria-controls="search-results" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-haspopup="listbox" data-index="{{ "index.json" | relURL }}">
       <div class="gh-search-results" id="search-results" role="listbox" aria-label="Search results"></div>
     </div>
   </div>

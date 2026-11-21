@@ -1,11 +1,25 @@
 {{ define "main" }}
-<div class="layout single-column">
-  <div class="box">
-    <div class="box-body empty-state">
-      <h1>404 — Page not found</h1>
-      <p>That page does not exist. Try the <a href="{{ "/" | relURL }}">home page</a> or browse <a href="{{ "/posts/" | relURL }}">all posts</a>.</p>
-      <p><a class="btn" href="{{ "/" | relURL }}">Go home</a></p>
+{{- $latest := first 3 (partial "sorted-posts.html" .) -}}
+<div class="layout">
+  <div>
+    <div class="box">
+      <div class="box-body empty-state">
+        <h1>404 — Page not found</h1>
+        <p>That page does not exist. Try the search box above, or start from one of these:</p>
+        <p><a class="btn" href="{{ "/" | relURL }}">Go home</a></p>
+      </div>
+    </div>
+
+    <div class="list" style="margin-top: 16px">
+      <div class="list-header">
+        <span>{{ partial "icon.html" "issue" }} Latest posts</span>
+        <span><a href="{{ "/posts/" | relURL }}">All posts</a></span>
+      </div>
+      {{ range $latest }}
+        {{ partial "post-row.html" . }}
+      {{ end }}
     </div>
   </div>
+  {{ partial "sidebar.html" . }}
 </div>
 {{ end }}

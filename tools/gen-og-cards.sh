@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Render a 1200x630 Open Graph card plus a 600x315 thumbnail for every post.
+# Render a 1200x630 Open Graph card for every post.
 #
 # Input : public/index.json (produced by a Hugo build)
-# Output: static/img/og/<slug>.png and <slug>-thumb.png
+# Output: assets/og/<slug>.png (Hugo derives a 320x168 thumbnail at build time)
 #
-# Runs on ubuntu-latest, which ships google-chrome. No ImageMagick required:
-# the thumbnail is a second headless screenshot of the same card scaled 50%.
+# Runs on ubuntu-latest, which ships google-chrome. Hugo resizes the card to a
+# 320x168 PNG thumbnail at build time; no ImageMagick is required.
 # Locally the templates fall back to /img/og-default.png when cards are absent.
 set -euo pipefail
 
@@ -13,7 +13,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 INDEX="${1:-public/index.json}"
-OUT_DIR="static/img/og"
+OUT_DIR="assets/og"
 mkdir -p "$OUT_DIR"
 
 CHROME="${CHROME_BIN:-}"
@@ -112,12 +112,9 @@ while IFS=$'\t' read -r title url date; do
   fi
 
   full="$TMP/$slug.html"
-  thumb="$TMP/$slug-thumb.html"
   write_card "$full" "" "$escaped" "$date" "$size"
-  write_card "$thumb" "html,body{width:600px;height:315px;overflow:hidden}#card{transform:scale(.5);transform-origin:top left}" "$escaped" "$date" "$size"
 
   shoot "$full" "$OUT_DIR/$slug.png" 1200 630
-  shoot "$thumb" "$OUT_DIR/$slug-thumb.png" 600 315
   count=$((count + 1))
 done < <(jq -r '.[] | [.title, .url, .date] | @tsv' "$INDEX")
 

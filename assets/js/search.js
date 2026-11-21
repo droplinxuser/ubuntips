@@ -39,6 +39,19 @@
     panel.innerHTML = "";
     results = [];
     active = -1;
+    input.setAttribute("aria-expanded", "false");
+    input.removeAttribute("aria-activedescendant");
+  }
+
+  function setActive(index) {
+    active = index;
+    var links = panel.querySelectorAll("a");
+    for (var i = 0; i < links.length; i++) {
+      var isActive = i === active;
+      links[i].classList.toggle("active", isActive);
+      links[i].setAttribute("aria-selected", isActive ? "true" : "false");
+      if (isActive) input.setAttribute("aria-activedescendant", links[i].id);
+    }
   }
 
   function render(query) {
@@ -54,37 +67,35 @@
 
     results = posts
       .filter(function (post) {
-        var haystack = [post.title, post.description, (post.tags || []).join(" "), post.markdown].join(" ").toLowerCase();
+        var haystack = [post.title, post.description, (post.tags || []).join(" "), post.text].join(" ").toLowerCase();
         return haystack.indexOf(q) !== -1;
       })
       .slice(0, 8);
 
-    active = results.length ? 0 : -1;
-
     if (!results.length) {
       panel.innerHTML = '<div class="r-empty">No posts match &ldquo;' + esc(query) + '&rdquo;</div>';
+      active = -1;
+      input.removeAttribute("aria-activedescendant");
     } else {
       panel.innerHTML = results
         .map(function (post, i) {
           return (
-            '<a href="' + esc(post.url) + '" class="' + (i === 0 ? "active" : "") + '" role="option">' +
+            '<a href="' + esc(post.url) + '" id="search-opt-' + i + '" role="option" aria-selected="false">' +
             '<span class="r-title">' + esc(post.title) + "</span>" +
             '<span class="r-meta">' + esc(post.date) + " · " + esc((post.tags || []).join(", ")) + "</span>" +
             "</a>"
           );
         })
         .join("");
+      setActive(0);
     }
     panel.classList.add("open");
+    input.setAttribute("aria-expanded", "true");
   }
 
   function move(delta) {
     if (!results.length) return;
-    active = (active + delta + results.length) % results.length;
-    var links = panel.querySelectorAll("a");
-    for (var i = 0; i < links.length; i++) {
-      links[i].classList.toggle("active", i === active);
-    }
+    setActive((active + delta + results.length) % results.length);
   }
 
   input.addEventListener("focus", load);

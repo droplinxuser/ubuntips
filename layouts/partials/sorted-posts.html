@@ -1,0 +1,6 @@
+{{ $all := where site.RegularPages "Section" "posts" }}
+{{ $pinned := where $all "Params.sticky" true }}
+{{ $rest := where $all "Params.sticky" "!=" true }}
+{{ $sorted := $pinned.ByDate.Reverse }}
+{{ range $rest.ByDate.Reverse }}{{ $sorted = $sorted | append . }}{{ end }}
+{{ return $sorted }}

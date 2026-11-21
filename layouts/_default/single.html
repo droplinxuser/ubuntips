@@ -10,7 +10,17 @@
           posted on <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
           · {{ .ReadingTime }} min read
         </p>
+        {{ if gt (.Lastmod.Sub .Date).Hours 24 }}
+          <p class="post-updated">Updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "Jan 2, 2006" }}</time></p>
+        {{ end }}
       </div>
+
+      {{ if .TableOfContents }}
+        <div class="box toc">
+          <div class="box-header">{{ partial "icon.html" "list" }} On this page</div>
+          <div class="box-body toc-body">{{ .TableOfContents }}</div>
+        </div>
+      {{ end }}
 
       <div class="box comment-box">
         <div class="box-header">
@@ -37,6 +47,27 @@
       {{ with .PrevInSection }}<a class="btn" href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}
       {{ with .NextInSection }}<a class="btn" style="margin-left:auto" href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}
     </nav>
+
+    {{ $related := first 3 (site.RegularPages.Related .) }}
+    {{ $relatedTitle := "Related posts" }}
+    {{ if not $related }}
+      {{ $relatedTitle = "More posts" }}
+      {{ $sorted := partial "sorted-posts.html" . }}
+      {{ $related = first 3 (where $sorted "RelPermalink" "!=" .RelPermalink) }}
+    {{ end }}
+    {{ with $related }}
+      <section class="related" aria-labelledby="related-title">
+        <h2 id="related-title">{{ $relatedTitle }}</h2>
+        <ul class="related-list">
+          {{ range . }}
+            <li class="related-item">
+              <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+              {{ with .Description }}<p class="related-desc">{{ . }}</p>{{ end }}
+            </li>
+          {{ end }}
+        </ul>
+      </section>
+    {{ end }}
   </div>
   {{ partial "sidebar.html" . }}
 </div>

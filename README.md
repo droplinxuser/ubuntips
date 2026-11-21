@@ -27,6 +27,9 @@ tags: ["ubuntu", "nginx"]
 ---
 ```
 
+A table of contents and heading anchors are generated automatically for every
+post with `##` or `###` headings.
+
 ## Local preview
 
 The Hugo binary is portable and lives in `.tools/` (git-ignored). To fetch it
@@ -40,29 +43,51 @@ pkgutil --expand-full /tmp/hugo.pkg /tmp/hugo-pkg
 cp /tmp/hugo-pkg/Payload/hugo .tools/hugo && chmod +x .tools/hugo
 ```
 
+`enableGitInfo` is on, so Hugo reads the commit date of each post to fill
+`lastmod` (used by the sitemap and JSON-LD and shown as "Updated" on the page).
+That requires a real `git` on `PATH`; a stub that only prompts for developer
+tools will fail the build.
+
 ## Layout
 
 | Path | Purpose |
 |---|---|
 | `content/posts/` | Markdown posts |
 | `layouts/` | Templates (no external theme) |
-| `assets/css/`, `assets/js/` | Styles and search box, minified + fingerprinted |
-| `static/img/` | Social cards, icons, thumbnails |
+| `assets/css/`, `assets/js/` | Styles and scripts, minified + fingerprinted |
+| `assets/og/` | Per-post OG cards generated in CI (git-ignored) |
+| `static/img/` | Default card, icons |
 | `static/_headers` | Cache/security policy for header-capable hosts |
-| `tools/gen-og-cards.sh` | Renders per-post OG cards and thumbnails in CI |
+| `tools/gen-og-cards.sh` | Renders per-post OG cards in CI |
+| `tools/check-links.pl` | Internal-link check run by CI |
 | `static/CNAME` | Keeps the custom domain on every deploy |
-| `.github/workflows/pages.yml` | Build and deploy to GitHub Pages |
+| `.github/workflows/pages.yml` | Build, check and deploy to GitHub Pages |
+
+## Features
+
+- **Table of contents** in a card above each long post, with `#` anchors on
+  every `h2`/`h3` for deep links.
+- **Light/dark/system theme** toggle in the header. The choice is stored in
+  `localStorage`; the script that applies it loads before the stylesheet so
+  there is no flash.
+- **Copy buttons** on every code block.
+- **Related posts** (by shared tags) with a "More posts" fallback.
+- **Client-side search** with keyboard navigation (`/`, arrows, Enter, Escape)
+  and ARIA combobox semantics.
+- **Pinned posts** via `sticky: true`.
+- **404 page** with search and the latest posts.
+- **Skip to content** link, semantic headings and focus styles.
 
 ## Social previews
 
 Each post gets its own 1200×630 card, generated during CI by
 `tools/gen-og-cards.sh`: a seed `hugo` build writes `public/index.json`, the
-script renders one HTML card per post and screenshots it with headless Chrome,
-then ImageMagick produces a 600×315 thumbnail. Both files land in
-`static/img/og/` (git-ignored), and the templates pick them up automatically.
+script renders one HTML card per post and screenshots it with headless Chrome.
+Cards land in `assets/og/<slug>.png` (git-ignored); Hugo resizes them to 320×168
+PNG thumbnails at build time, so no ImageMagick is needed.
 
-- Card URL: `/img/og/<slug>.png`
-- Thumbnail: `/img/og/<slug>-thumb.png`, used in post lists
+- Card URL: `/og/<slug>.png`
+- Thumbnail: `/og/<slug>-<hash>.png`, used in post lists
 - Fallback: `static/img/og-default.png`
 
 Override for a single post with front matter:
@@ -79,17 +104,20 @@ Chrome if you want them locally.
 ## SEO
 
 - `layouts/robots.txt` allows everything and points to the sitemap.
-- `hugo.toml` sets sitemap `changefreq`/`priority`; Hugo emits `sitemap.xml`,
-  `index.xml` and `index.json`.
-- `layouts/partials/head.html` emits canonical, robots, Open Graph, Twitter and
-  theme-color tags, plus `rel=prev/next` on paginated sections.
+- `layouts/sitemap.xml` sets priorities per page kind, keeps `lastmod` from git,
+  and leaves out tag pages that hold a single post.
+- Pages with fewer than two posts in a tag are `noindex, follow`.
+- `layouts/partials/head.html` emits canonical, robots, Open Graph, Twitter,
+  theme-color, a CSP and the stylesheet/script tags.
 - `layouts/partials/schema.html` emits JSON-LD: `BlogPosting` + `BreadcrumbList`
-  on posts, `WebSite` + `Organization` on the home page.
-- Icons: `favicon.svg`, PNG fallbacks, `apple-touch-icon`, `site.webmanifest`.
+  on posts, `WebSite` + `Organization` on the home page, with `dateModified`
+  from git.
+- Icons: `favicon.ico`, `favicon.svg`, PNG fallbacks, `apple-touch-icon`,
+  `site.webmanifest`.
 - The author for every post comes from `params.author` (`Draft`), so new posts
   inherit it without front matter.
 
-## Caching
+## Caching and security headers
 
 `static/_headers` carries the intended policy:
 
@@ -98,16 +126,36 @@ Chrome if you want them locally.
 | `/*.html`, `/` | `max-age=0, must-revalidate` |
 | `/*.xml`, `/*.json` | `max-age=600` |
 | `/css/*`, `/js/*` | 1 year, immutable (filenames are fingerprinted) |
-| `/img/*` | 1 week, stale-while-revalidate |
+| `/img/*`, `/og/*` | 1 week, stale-while-revalidate |
+
+It also sets HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`,
+`Referrer-Policy`, `Permissions-Policy` and a CSP.
 
 **GitHub Pages ignores `_headers`** and always answers with
-`cache-control: max-age=600`. The fingerprinted asset names still prevent
-stale CSS/JS after a deploy, because the URL changes. To get the full policy,
-either serve the same artifact through Cloudflare (proxy the DNS records, SSL
-mode *Full*) and add a Cache Rule for `/css/*` and `/js/*`, or move hosting to
+`cache-control: max-age=600`; it also sends no HSTS or CSP. The HTML therefore
+carries a CSP `<meta>` as a partial substitute. To get the full policy, either
+serve the artifact through Cloudflare (proxy the DNS records, SSL mode *Full*)
+and add a Cache Rule for `/css/*`, `/js/*` and `/og/*`, or move hosting to
 Cloudflare Pages, which reads `_headers` directly.
 
 ## Search
 
-The header search box loads `/index.json` (generated from all posts) and filters
-client-side. No third-party service is involved.
+The header search box loads `/index.json` and filters client-side. The index
+contains title, URL, date, description, tags and the first 1,200 characters of
+plain text per post, so it stays small (about 6 KB for four posts) instead of
+carrying full Markdown.
+
+## CI
+
+`pages.yml` installs the pinned Hugo version, builds once to seed the post list,
+generates social cards, builds the final site, checks that every internal link
+resolves, and deploys.
+
+Two guards run before deploy:
+
+- Hugo fails the build when `--printPathWarnings` reports duplicate target
+  paths.
+- `tools/check-links.pl` fails on any internal `href`/`src` that does not map to
+  a file in `public/`.
+
+Dependabot updates the action versions weekly.

@@ -1,12 +1,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; base-uri 'self'; form-action 'none'; object-src 'none'{{ if hugo.IsProduction }}; upgrade-insecure-requests{{ end }}">
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
 
 {{- $description := site.Params.description }}
 {{- with .Description }}{{ $description = . }}{{ else }}{{ if .IsPage }}{{ $description = .Summary | plainify | truncate 160 }}{{ end }}{{ end }}
 {{- $og := partial "og-image.html" . }}
+{{- $thinTerm := and (eq .Kind "term") (lt (len .Pages) 2) }}
 
-{{ if eq .Kind "404" }}
+{{ if or (eq .Kind "404") $thinTerm }}
 <meta name="robots" content="noindex, follow">
 {{ else }}
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -47,12 +49,16 @@
 
 {{ partial "schema.html" (dict "page" . "description" $description "image" $og.url) }}
 
-{{ $chroma := resources.Get "css/chroma.css" | minify | fingerprint }}
-{{ $style := resources.Get "css/style.css" | minify | fingerprint }}
+{{ $theme := resources.Get "js/theme.js" | minify | fingerprint }}
+{{ $enhance := resources.Get "js/enhance.js" | minify | fingerprint }}
 {{ $search := resources.Get "js/search.js" | minify | fingerprint }}
-<link rel="stylesheet" href="{{ $chroma.RelPermalink }}" integrity="{{ $chroma.Data.Integrity }}">
-<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+{{ $css := slice (resources.Get "css/chroma.css") (resources.Get "css/style.css") | resources.Concat "css/site.css" | minify | fingerprint }}
+<script src="{{ $theme.RelPermalink }}" integrity="{{ $theme.Data.Integrity }}"></script>
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 <script src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}" defer></script>
+<script src="{{ $enhance.RelPermalink }}" integrity="{{ $enhance.Data.Integrity }}" defer></script>
+
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/img/icon-48.png" type="image/png" sizes="48x48">
 <link rel="icon" href="/img/icon-192.png" type="image/png" sizes="192x192">
