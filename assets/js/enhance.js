@@ -125,5 +125,21 @@ document.addEventListener("DOMContentLoaded", function () {
     byHeading.forEach(function (_, heading) {
       observer.observe(heading);
     });
+
+    var hash = "";
+    try {
+      hash = decodeURIComponent(window.location.hash.slice(1));
+    } catch (e) {}
+    var initial = null;
+    if (hash) {
+      tocLinks.forEach(function (link) {
+        if (link.getAttribute("href") === "#" + hash) initial = link;
+      });
+    }
+    if (!initial) initial = tocLinks[0];
+    if (initial) {
+      initial.classList.add("active");
+      initial.setAttribute("aria-current", "true");
+    }
   }
 });

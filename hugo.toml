@@ -59,5 +59,13 @@ enableGitInfo = true
     pageRef = "/about"
     weight = 20
 
+[mediaTypes."application/feed+json"]
+  suffixes = ["json"]
+
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "JSONFEED"]
+
+[outputFormats.JSONFEED]
+  mediaType = "application/feed+json"
+  baseName = "feed"
+  isPlainText = true

@@ -6,6 +6,7 @@
 
   var posts = null;
   var loading = false;
+  var failed = false;
   var results = [];
   var active = -1;
 
@@ -27,6 +28,7 @@
         posts = Array.isArray(data) ? data : [];
       })
       .catch(function () {
+        failed = true;
         posts = [];
       })
       .then(function () {
@@ -60,6 +62,14 @@
     var q = query.trim().toLowerCase();
     if (!q) {
       close();
+      return;
+    }
+    if (failed) {
+      panel.innerHTML = '<div class="r-empty">Search is unavailable right now.</div>';
+      panel.classList.add("open");
+      input.setAttribute("aria-expanded", "true");
+      input.removeAttribute("aria-activedescendant");
+      if (status) status.textContent = "Search is unavailable";
       return;
     }
     if (!posts) {

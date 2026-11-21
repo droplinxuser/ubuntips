@@ -1447,3 +1447,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
 .share-btn:hover {
   background: var(--border-muted);
 }
+
+.start-here {
+  font-size: 15px;
+}

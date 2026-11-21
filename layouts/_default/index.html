@@ -13,6 +13,10 @@
         <p>{{ site.Params.description }}</p>
         <p>This site collects the parts of running Ubuntu servers that are easy to get subtly wrong: tuning values that only matter under load, hardening steps that are worth doing once, and the occasional script that saves an afternoon.</p>
         <p>{{ len $all }} posts so far. Everything is Markdown in a git repository.</p>
+        <p class="start-here">New here? Start with
+          {{ with site.GetPage "/posts/one-idempotent-script" }}<a href="{{ .RelPermalink }}">the setup-script guide</a>{{ end }}
+          or
+          {{ with site.GetPage "/posts/why-this-blog-is-a-static-site" }}<a href="{{ .RelPermalink }}">why this site is static</a>{{ end }}.</p>
       </div>
     </div>
 
