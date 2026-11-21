@@ -4,9 +4,9 @@
 # Input : public/index.json (produced by a Hugo build)
 # Output: static/img/og/<slug>.png and <slug>-thumb.png
 #
-# Used by .github/workflows/pages.yml on ubuntu-latest, which ships
-# google-chrome and ImageMagick. Local runs are optional; without the cards the
-# templates fall back to /img/og-default.png.
+# Runs on ubuntu-latest, which ships google-chrome. No ImageMagick required:
+# the thumbnail is a second headless screenshot of the same card scaled 50%.
+# Locally the templates fall back to /img/og-default.png when cards are absent.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -32,13 +32,6 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 1
 fi
 
-RESIZE=""
-if command -v magick >/dev/null 2>&1; then
-  RESIZE="magick"
-elif command -v convert >/dev/null 2>&1; then
-  RESIZE="convert"
-fi
-
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -46,25 +39,10 @@ html_escape() {
   printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/"/\&quot;/g'
 }
 
-count=0
-while IFS=$'\t' read -r title url date; do
-  [ -n "${url:-}" ] || continue
-  slug="${url%/}"
-  slug="${slug##*/}"
-  case "$slug" in
-    ""|*[!A-Za-z0-9._-]*) echo "gen-og-cards: skipping odd slug '$slug'" >&2; continue ;;
-  esac
-
-  escaped="$(html_escape "$title")"
-  n=${#title}
-  if   [ "$n" -le 42 ]; then size=82
-  elif [ "$n" -le 62 ]; then size=68
-  elif [ "$n" -le 85 ]; then size=56
-  else size=46
-  fi
-
-  page="$TMP/$slug.html"
-  cat > "$page" <<HTML
+# $1 = output file, $2 = extra CSS (thumbnail scaling)
+write_card() {
+  local out="$1" extra="$2" title="$3" date="$4" size="$5"
+  cat > "$out" <<HTML
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><style>
   *{box-sizing:border-box;margin:0}
@@ -87,6 +65,7 @@ while IFS=$'\t' read -r title url date; do
          border:1px solid rgba(56,139,253,.4);border-radius:2em}
   .label.green{color:#3fb950;background:rgba(46,160,67,.15);border-color:rgba(46,160,67,.4)}
   .url{margin-left:auto;font-size:22px;color:#6e7681}
+  ${extra}
 </style></head>
 <body><div id="card">
   <div class="top">
@@ -94,7 +73,7 @@ while IFS=$'\t' read -r title url date; do
     <div class="brand">ubuntips<span>.com</span></div>
   </div>
   <div class="mid">
-    <h1>${escaped}</h1>
+    <h1>${title}</h1>
     <div class="meta">${date}</div>
   </div>
   <div class="bottom">
@@ -106,15 +85,39 @@ while IFS=$'\t' read -r title url date; do
   </div>
 </div></body></html>
 HTML
+}
 
-  png="$OUT_DIR/$slug.png"
+shoot() {
+  local html="$1" png="$2" w="$3" h="$4"
   "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars \
-    --force-device-scale-factor=1 --window-size=1200,630 \
-    --virtual-time-budget=2000 --screenshot="$png" "file://$page" >/dev/null 2>&1
+    --force-device-scale-factor=1 --window-size="$w,$h" \
+    --virtual-time-budget=2000 --screenshot="$png" "file://$html" >/dev/null 2>&1
+}
 
-  if [ -n "$RESIZE" ] && [ -f "$png" ]; then
-    "$RESIZE" "$png" -resize 600x315 "$OUT_DIR/$slug-thumb.png"
+count=0
+while IFS=$'\t' read -r title url date; do
+  [ -n "${url:-}" ] || continue
+  slug="${url%/}"
+  slug="${slug##*/}"
+  case "$slug" in
+    ""|*[!A-Za-z0-9._-]*) echo "gen-og-cards: skipping odd slug '$slug'" >&2; continue ;;
+  esac
+
+  escaped="$(html_escape "$title")"
+  n=${#title}
+  if   [ "$n" -le 42 ]; then size=82
+  elif [ "$n" -le 62 ]; then size=68
+  elif [ "$n" -le 85 ]; then size=56
+  else size=46
   fi
+
+  full="$TMP/$slug.html"
+  thumb="$TMP/$slug-thumb.html"
+  write_card "$full" "" "$escaped" "$date" "$size"
+  write_card "$thumb" "html,body{width:600px;height:315px;overflow:hidden}#card{transform:scale(.5);transform-origin:top left}" "$escaped" "$date" "$size"
+
+  shoot "$full" "$OUT_DIR/$slug.png" 1200 630
+  shoot "$thumb" "$OUT_DIR/$slug-thumb.png" 600 315
   count=$((count + 1))
 done < <(jq -r '.[] | [.title, .url, .date] | @tsv' "$INDEX")
 
