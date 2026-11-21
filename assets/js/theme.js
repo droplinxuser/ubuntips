@@ -6,33 +6,43 @@
   } catch (e) {}
   if (stored === "light" || stored === "dark") root.dataset.theme = stored;
 
-  function effective() {
+  function current() {
     if (root.dataset.theme === "light" || root.dataset.theme === "dark") return root.dataset.theme;
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return "system";
+  }
+
+  function nextOf(state) {
+    return state === "system" ? "light" : state === "light" ? "dark" : "system";
   }
 
   function paint(button) {
-    var next = effective() === "dark" ? "light" : "dark";
+    var next = nextOf(current());
     button.dataset.next = next;
     button.setAttribute("aria-label", "Switch to " + next + " theme");
-    button.setAttribute("title", "Switch to " + next + " theme");
-    var sun = button.querySelector(".icon-sun");
-    var moon = button.querySelector(".icon-moon");
-    if (sun) sun.hidden = effective() !== "dark";
-    if (moon) moon.hidden = effective() === "dark";
+    button.setAttribute("title", "Theme: " + current() + " (click for " + next + ")");
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     var button = document.getElementById("theme-toggle");
     if (!button) return;
     paint(button);
+
     button.addEventListener("click", function () {
-      root.dataset.theme = button.dataset.next;
-      try {
-        localStorage.setItem("theme", button.dataset.next);
-      } catch (e) {}
+      var next = button.dataset.next;
+      if (next === "system") {
+        delete root.dataset.theme;
+        try {
+          localStorage.removeItem("theme");
+        } catch (e) {}
+      } else {
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem("theme", next);
+        } catch (e) {}
+      }
       paint(button);
     });
+
     if (window.matchMedia) {
       var query = window.matchMedia("(prefers-color-scheme: dark)");
       if (query.addEventListener) {

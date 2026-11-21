@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="list" style="margin-top: 16px">
+    <div class="list list-spaced">
       <div class="list-header">
         <span>{{ partial "icon.html" "issue" }} Latest posts</span>
         <span>{{ len $all }} total</span>
@@ -27,6 +27,7 @@
         <div class="list-row"><div class="row-main"><div class="row-title">No posts yet.</div></div></div>
       {{ end }}
     </div>
+    <p class="more"><a href="{{ "/posts/" | relURL }}">All posts →</a></p>
   </div>
   {{ partial "sidebar.html" . }}
 </div>

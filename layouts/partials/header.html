@@ -15,13 +15,15 @@
       {{ end }}
     </nav>
     <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme">
-      <span class="icon-sun" hidden>{{ partial "icon.html" "sun" }}</span>
+      <span class="icon-system">{{ partial "icon.html" "system" }}</span>
+      <span class="icon-sun">{{ partial "icon.html" "sun" }}</span>
       <span class="icon-moon">{{ partial "icon.html" "moon" }}</span>
     </button>
     <div class="gh-search" role="search">
       <span class="search-icon">{{ partial "icon.html" "search" }}</span>
       <input id="site-search" type="search" placeholder="Search posts…" autocomplete="off" spellcheck="false" aria-label="Search posts" aria-controls="search-results" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-haspopup="listbox" aria-keyshortcuts="/" title="Press / to search" data-index="{{ "index.json" | relURL }}">
       <div class="gh-search-results" id="search-results" role="listbox" aria-label="Search results"></div>
+      <div class="visually-hidden" id="search-status" role="status" aria-live="polite"></div>
     </div>
   </div>
 </header>

@@ -46,6 +46,7 @@
               <a class="label" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }} <span>{{ .Count }}</span></a>
             {{ end }}
           </div>
+          <a class="sidebar-more" href="{{ "/tags/" | relURL }}">All tags →</a>
         </div>
       </div>
     {{ end }}
@@ -59,7 +60,7 @@
         <a class="btn" href="{{ . }}">View source</a>
         {{ if $.IsPage }}
           {{ with $.File }}
-            <a class="btn" style="margin-top: 8px" href="{{ printf "%s/edit/main/content/%s" site.Params.repo .Path }}">Edit this page</a>
+            <a class="btn" href="{{ printf "%s/edit/main/content/%s" site.Params.repo .Path }}">Edit this page</a>
           {{ end }}
         {{ end }}
       {{ end }}

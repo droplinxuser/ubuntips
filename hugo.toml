@@ -18,6 +18,7 @@ enableGitInfo = true
 
 [params]
   description = "Practical notes on provisioning, tuning and hardening Ubuntu servers."
+  tagline = "Practical notes on Ubuntu servers"
   author = "Draft"
   repo = "https://github.com/droplinxuser/ubuntips"
   ogImage = "/img/og-default.png"

@@ -1,6 +1,7 @@
 (function () {
   var input = document.getElementById("site-search");
   var panel = document.getElementById("search-results");
+  var status = document.getElementById("search-status");
   if (!input || !panel) return;
 
   var posts = null;
@@ -41,6 +42,7 @@
     active = -1;
     input.setAttribute("aria-expanded", "false");
     input.removeAttribute("aria-activedescendant");
+    if (status) status.textContent = "";
   }
 
   function setActive(index) {
@@ -91,6 +93,11 @@
     }
     panel.classList.add("open");
     input.setAttribute("aria-expanded", "true");
+    if (status) {
+      status.textContent = results.length
+        ? results.length + (results.length === 1 ? " result" : " results") + " for " + query.trim()
+        : "No results for " + query.trim();
+    }
   }
 
   function move(delta) {

@@ -65,15 +65,16 @@ tools will fail the build.
 
 ## Features
 
-- **Table of contents** above each long post, collapsible on mobile, with the
-  current section highlighted while scrolling and `#` anchors for deep links.
-- **Light/dark/system theme** toggle in the header. The choice is stored in
-  `localStorage`; the script that applies it loads before the stylesheet so
-  there is no flash.
+- **Table of contents** above each long post, collapsible on mobile (and closed
+  after tapping a link), with the current section highlighted while scrolling
+  and `#` anchors for deep links.
+- **System/light/dark theme** toggle that cycles through all three. The explicit
+  choice is stored in `localStorage`; the script that applies it loads before
+  the stylesheet so there is no flash.
 - **Copy buttons** on every code block.
 - **Related posts** (by shared tags) with a "More posts" fallback.
 - **Client-side search** with keyboard navigation (`/`, arrows, Enter, Escape),
-  ARIA combobox semantics, and shareable `?q=` URLs.
+  ARIA combobox semantics, an announced result count, and shareable `?q=` URLs.
 - **Pinned posts** via `sticky: true`.
 - **Edit this page** link on every post, pointing at the GitHub editor.
 - **404 page** with search and the latest posts.
@@ -85,11 +86,11 @@ tools will fail the build.
 Each post gets its own 1200×630 card, generated during CI by
 `tools/gen-og-cards.sh`: a seed `hugo` build writes `public/index.json`, the
 script renders one HTML card per post and screenshots it with headless Chrome.
-Cards land in `assets/og/<slug>.png` (git-ignored); Hugo resizes them to 320×168
-PNG thumbnails at build time, so no ImageMagick is needed.
+Cards land in `assets/og/<slug>.png` (git-ignored); Hugo derives a 320×168
+thumbnail in both WebP and PNG at build time, so no ImageMagick is needed.
 
 - Card URL: `/og/<slug>.png`
-- Thumbnail: `/og/<slug>-<hash>.png`, used in post lists
+- Thumbnail: `/og/<slug>-<hash>.webp` with a PNG `<picture>` fallback
 - Fallback: `static/img/og-default.png`
 
 Override for a single post with front matter:
@@ -111,7 +112,9 @@ Chrome if you want them locally.
   and leaves out tag pages that hold a single post. The unused `categories`
   taxonomy is disabled.
 - Listing pages (posts and tags) have a real `<h1>`, and tag pages get their own
-  meta description.
+  meta description and `CollectionPage` + `ItemList` structured data.
+- The home page title carries the tagline (`Ubuntu Tips — Practical notes on
+  Ubuntu servers`) instead of the bare site name.
 - Pages with fewer than two posts in a tag are `noindex, follow`.
 - `.well-known/security.txt` is published for vulnerability reports.
 - `layouts/partials/head.html` emits canonical, robots, Open Graph, Twitter,
@@ -140,10 +143,11 @@ It also sets HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`,
 
 **GitHub Pages ignores `_headers`** and always answers with
 `cache-control: max-age=600`; it also sends no HSTS or CSP. The HTML therefore
-carries a CSP `<meta>` as a partial substitute. To get the full policy, either
-serve the artifact through Cloudflare (proxy the DNS records, SSL mode *Full*)
-and add a Cache Rule for `/css/*`, `/js/*` and `/og/*`, or move hosting to
-Cloudflare Pages, which reads `_headers` directly.
+carries a CSP `<meta>` as a partial substitute, with `style-src 'self'` (no
+inline styles anywhere in the markup) and a `Referrer-Policy` meta. To get the
+full policy, either serve the artifact through Cloudflare (proxy the DNS
+records, SSL mode *Full*) and add a Cache Rule for `/css/*`, `/js/*` and
+`/og/*`, or move hosting to Cloudflare Pages, which reads `_headers` directly.
 
 ## Search
 
@@ -164,6 +168,7 @@ Two guards run before deploy:
 - Hugo fails the build when `--printPathWarnings` reports duplicate target
   paths.
 - `tools/check-links.pl` fails on any internal `href`/`src` that does not map to
-  a file in `public/`.
+  a file in `public/`, and on any `#fragment` with no matching `id` in the
+  target page.
 
 Dependabot updates the action versions weekly.

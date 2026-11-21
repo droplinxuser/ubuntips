@@ -42,7 +42,7 @@
   -}}
   {{- $breadcrumb := dict "@type" "BreadcrumbList" "itemListElement" $crumbs -}}
   <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" (slice $article $breadcrumb) | jsonify | safeJS }}</script>
-{{- else -}}
+{{- else if $page.IsHome -}}
   {{- $website := dict
     "@type" "WebSite"
     "name" site.Title
@@ -58,4 +58,21 @@
     )
   -}}
   <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" (slice $website $publisher) | jsonify | safeJS }}</script>
+{{- else if eq $page.Kind "404" -}}
+{{- else -}}
+  {{- $items := slice -}}
+  {{- range $i, $p := first 20 $page.Pages -}}
+    {{- $items = $items | append (dict "@type" "ListItem" "position" (add $i 1) "url" $p.Permalink "name" $p.Title) -}}
+  {{- end -}}
+  {{- $list := dict "@type" "ItemList" "numberOfItems" (len $page.Pages) "itemListElement" $items -}}
+  {{- $crumbs := slice (dict "@type" "ListItem" "position" 1 "name" "Home" "item" site.BaseURL) -}}
+  {{- if eq $page.Kind "term" -}}
+    {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" "Tags" "item" (absURL "/tags/")) -}}
+    {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 3 "name" $page.Title "item" $page.Permalink) -}}
+  {{- else -}}
+    {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $page.Title "item" $page.Permalink) -}}
+  {{- end -}}
+  {{- $collection := dict "@type" "CollectionPage" "name" $page.Title "description" $description "url" $page.Permalink "isPartOf" $blog "mainEntity" $list -}}
+  {{- $breadcrumb := dict "@type" "BreadcrumbList" "itemListElement" $crumbs -}}
+  <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" (slice $collection $breadcrumb) | jsonify | safeJS }}</script>
 {{- end -}}

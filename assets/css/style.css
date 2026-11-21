@@ -1058,7 +1058,7 @@ a:hover {
   .list-row {
     gap: 8px;
   }
-  .row-thumb {
+  .row-thumb-wrap {
     display: none;
   }
   .row-icon {
@@ -1364,4 +1364,50 @@ details.toc:not([open]) summary::after {
 .back-top {
   margin: 24px 0 0;
   font-size: 13px;
+}
+
+.row-thumb-wrap {
+  flex: none;
+  display: block;
+  margin-top: 2px;
+}
+
+.row-thumb-wrap .row-thumb {
+  margin-top: 0;
+}
+
+.list-spaced {
+  margin-top: 16px;
+}
+
+.post-nav .next {
+  margin-left: auto;
+}
+
+.more {
+  margin: 16px 0 0;
+  font-size: 14px;
+}
+
+.sidebar-more {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+@media (min-width: 1025px) {
+  .sidebar {
+    position: sticky;
+    top: 16px;
+  }
+}
+
+.theme-toggle span {
+  display: none;
+}
+
+html:not([data-theme]) .theme-toggle .icon-system,
+html[data-theme="light"] .theme-toggle .icon-sun,
+html[data-theme="dark"] .theme-toggle .icon-moon {
+  display: block;
 }

@@ -49,6 +49,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   var tocLinks = Array.prototype.slice.call(document.querySelectorAll(".toc-body a[href^='#']"));
+  tocLinks.forEach(function (link) {
+    link.addEventListener("click", function () {
+      if (toc && window.matchMedia && window.matchMedia("(max-width: 768px)").matches) {
+        toc.open = false;
+      }
+    });
+  });
   if (tocLinks.length && "IntersectionObserver" in window) {
     var byHeading = new Map();
     tocLinks.forEach(function (link) {
