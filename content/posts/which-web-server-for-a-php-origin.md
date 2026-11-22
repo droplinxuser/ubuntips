@@ -9,7 +9,7 @@ Every release of my [provisioning script](/posts/one-idempotent-script/) runs th
 
 This cycle's question was different from the usual tuning pass: **which web server should actually sit in front of WordPress, XenForo and Chevereto?** Angie is the current default. nginx is the obvious alternative, and the forks — FreeNginx, OpenResty, Tengine — all promise the same core with a different story. Caddy and OpenLiteSpeed are the two non-nginx designs people ask about.
 
-The short answer: for these applications the event loop is not what separates the candidates. The generic full-page cache is. Every nginx-family build lands inside the run-to-run spread on the same work, Caddy is competitive when it serves the same file or the same PHP script, and then it loses by two orders of magnitude on a cached page because its standard build has no page cache at all.
+The short answer: for these applications the event loop is not what separates the candidates. The generic full-page cache is. Every nginx-family build lands inside the run-to-run spread on the same work, Caddy serves the same static file just as quickly, and then it loses by two orders of magnitude on a cached page because its standard build has no page cache at all.
 
 ## The test bed
 
