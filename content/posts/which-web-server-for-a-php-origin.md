@@ -1,6 +1,6 @@
 ---
 title: "Angie, nginx, FreeNginx, OpenResty, Tengine or Caddy? The cache decides"
-date: 2026-11-23T21:00:00+08:00
+date: 2026-11-23T04:00:00+08:00
 description: "Six web servers, one PHP-FPM pool, three real applications and the same load generator. The event loop is not what separates them; a generic full-page cache is, and stock Caddy does not have one."
 tags: ["angie", "nginx", "freenginx", "openresty", "tengine", "caddy", "openlitespeed", "benchmark", "xenforo", "wordpress", "chevereto", "php"]
 ---
