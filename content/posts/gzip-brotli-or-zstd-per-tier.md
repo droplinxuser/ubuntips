@@ -21,6 +21,8 @@ This cycle of my [provisioning script](/posts/one-idempotent-script/) audit meas
 
 The same audit also found a way to make the guest cache store a member's page and serve it to everyone. That's at the end.
 
+> **Update, 23 November 2026:** zstd is out again in release 1.21.59. Every site I run sits behind Cloudflare, and Cloudflare asks origins for `br, gzip` only, so on those servers the zstd module never answered a single request. `--optimize` now removes its configuration and the module. The measurements below still stand; they just only matter for a server that browsers reach directly. The same release also stopped the guest cache from keeping a separate copy of every page for each browser's exact `Accept-Encoding` header (Chrome, Safari and Cloudflare each filled their own), so all of them now share one cached page per encoding.
+
 ## The test bed
 
 - One dedicated server: 6-core / 12-thread Xeon, 62 GB RAM, Ubuntu 26.04.1, CPU mitigations on.
@@ -87,6 +89,8 @@ The cron helper now rebuilds a sibling whenever the two modification times *diff
 The first pass over a XenForo + WordPress host took several minutes, so it now runs in the background instead of holding up the script.
 
 ## 2. Member pages: zstd where the browser accepts it
+
+*Removed again in 1.21.59: see the update at the top. Behind Cloudflare, Brotli 4 is what member pages get.*
 
 A logged-in XenForo thread page (127 KB of HTML) can't be cached. It's rendered by PHP and compressed by Angie on every request. Here are the three encoders at the levels that matter, rotated (from two rotation sessions, each with its own Brotli 4 reference: 380 and 379 requests/s):
 
@@ -177,6 +181,6 @@ The missing Redis, igbinary and Imagick extensions for PHP 8.6 are now packaged.
 All of this shipped in release 1.21.58 of [ubuntu-setup-script](https://github.com/droplinxuser/ubuntu-setup-script) and its Angie configuration. If you tune compression yourself:
 
 1. **Precompress static files with Brotli 11 and gzip -9.** Rebuild a sibling whenever its modification time differs from the source's, not only when the source is newer.
-2. **Use zstd 3 for dynamic responses, and load it after Brotli.** Keep Brotli 4 for clients that don't ask for zstd.
+2. **Use zstd 3 for dynamic responses, and load it after Brotli, if browsers reach your server directly.** Keep Brotli 4 for clients that don't ask for zstd. Behind Cloudflare, skip it: Cloudflare only asks the origin for Brotli or gzip (the script removed zstd in 1.21.59 for this reason).
 3. **Store cached pages compressed.** Spend a higher level once rather than a low level on every hit.
 4. **Rotate what you compare within each round.** Otherwise you're measuring your CPU's boost budget.
