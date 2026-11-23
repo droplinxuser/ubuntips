@@ -1,6 +1,6 @@
 ---
 title: "Who compresses a logged-in XenForo page? 12 % of PHP, one fastcgi_param, and a clock that lied"
-date: 2026-11-23T15:30:00+08:00
+date: 2026-11-23T14:30:00+08:00
 description: "Profiling the member pages of a XenForo forum showed zlib eating 12 % of PHP-FPM CPU: XenForo gzips its own pages at level 9 inside the worker. Moving that to Angie gave +5 % on the forum index and +9 % on thread pages. Along the way, a CPU turbo budget faked a 27 % speed-up, and three other ideas did not survive measurement."
 tags: ["xenforo", "php-fpm", "angie", "nginx", "brotli", "gzip", "performance", "benchmark", "opcache", "turbo"]
 ---
