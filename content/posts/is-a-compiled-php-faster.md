@@ -1,6 +1,6 @@
 ---
 title: "Is a compiled PHP faster? Four builds, one Xeon, and a JIT that makes the question moot"
-date: 2026-11-23T20:10:00+08:00
+date: 2026-11-23T16:00:00+08:00
 description: "Sury packages, Ubuntu's archive, and PHP built from source with -O3 -march=native and only the modules XenForo needs. On a PHP-bound forum the difference was inside the noise, and the reason is the tracing JIT."
 tags: ["php", "php-fpm", "opcache", "jit", "xenforo", "wordpress", "performance", "benchmark", "compiler"]
 ---
