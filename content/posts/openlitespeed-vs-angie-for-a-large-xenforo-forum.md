@@ -106,4 +106,4 @@ The audit this time ran in two rounds, and every finding was checked by independ
 * **The XenForo front-proxy cache no longer stores a 403 or 429** from the origin, which could take a page down for every guest for five seconds.
 * **The tuner now reaches Valkey on its socket.** On a server whose cache listens somewhere other than the default port, every tuning run restarted it twice and emptied it.
 * **A Ctrl-C during `--domain` can no longer leave the site down.** The final tuning pass ran in a subshell where a paused web server was invisible to the cleanup code.
-* **`/etc/hosts` no longer gains a blank line** with every install and restore. That small drift had been open for three cycles; the cause was `awk` always ending the file with a newline.
+* **`/etc/hosts` no longer gains a blank line** with every install and restore. That small drift had been open for three cycles. The cause turned out to be cloud-init: it rewrites `/etc/hosts` at the first boot after the server is renamed, and the restore then merged instead of restoring the original, keeping the blank line cloud-init left.
